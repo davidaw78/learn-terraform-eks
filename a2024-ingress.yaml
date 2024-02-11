@@ -17,4 +17,4 @@ spec:
           service:
             name: a2024-service
             port: 
-              number: 80
+              number: 1741
