@@ -4,7 +4,8 @@ metadata:
   name: a2024-ingress
 #  namespace: kubernetes-dashboard
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: ingress-nginx
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
   - host: ec2-44-198-61-198.compute-1.amazonaws.com
