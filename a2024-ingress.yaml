@@ -6,7 +6,7 @@ metadata:
 #  annotations:
 #    kubernetes.io/ingress.class: "nginx"
 spec:
-  ingressClassName: nginx
+#  ingressClassName: nginx
   controller: nginx.org/ingress-controller
   rules:
   - host: af7a211710b3d4a12ae860cbfa5b91a3-671372143.us-east-1.elb.amazonaws.com
