@@ -34,6 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
+  namespace: a2024
 spec:
   selector:
     app: mongodb
@@ -49,6 +50,7 @@ metadata:
   labels:
     io.kompose.service: elixirmongodbdata
   name: elixirmongodbdata
+  namespace: a2024
 spec:
   accessModes:
     - ReadWriteOnce
