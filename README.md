@@ -2,7 +2,7 @@ Download eksctl - https://github.com/eksctl-io/eksctl
 # To create cluster
 eksctl create cluster \\\
 --name cluster-name \\\
---version 1.17 \\\
+--version 1.29 \\\
 --region us-east-1 \\\
 --nodegroup-name linux-nodes \\\
 --node-type t2.micro \\\
