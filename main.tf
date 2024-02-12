@@ -8,9 +8,9 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.0"
     }
-    kubectl = {
-      source  = "alekc/kubectl"
-      version = ">= 2.0.0"
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
     }
   }
 }
@@ -344,13 +344,17 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "a2024" {
-    yaml_body = <<YAML
-apiVersion: apps/v1
+resource "kubernetes_manifest" "a2024-namespace" {
+  manifest = <<EOF
+apiVersion: v1
 kind: Namespace
 metadata:
   name: a2024
----
+EOF
+}
+
+resource "kubernetes_manifest" "a2024-deployment" {
+  manifest = <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -382,7 +386,11 @@ spec:
               value: "http:"
             - name: mongourl
               value: "mongodb://mongodb-service:27017"
----
+EOF
+}
+
+resource "kubernetes_manifest" "a2024-service" {
+  manifest = <<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -395,7 +403,7 @@ spec:
     - protocol: TCP
       port: 1741
       targetPort: 1740
-YAML
+EOF
 }
 
 resource "aws_eks_node_group" "private-nodes" {
