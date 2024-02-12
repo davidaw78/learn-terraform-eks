@@ -279,7 +279,7 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
 }
 
 resource "kubectl_manifest" "a2024" {
-    yaml_body == <<YAML
+    yaml_body = <<YAML
 apiVersion: v1
 kind: Namespace
 metadata:
