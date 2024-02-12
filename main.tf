@@ -317,7 +317,17 @@ resource "aws_eks_node_group" "private-nodes" {
 
  resource "aws_launch_template" "eks-with-disks" {
    name = "eks-with-disks"
-   user_data = base64encode("data.template_file.run-app.rendered")
+   user_data = <<-EOF
+    Content-Type: multipart/mixed; boundary="==BOUNDARY=="
+
+    --==BOUNDARY==
+    Content-Type: text/x-shellscript; charset="us-ascii"
+
+    #!/bin/bash
+    echo "This is a shell script section."
+
+    --==BOUNDARY==--
+  EOF
 #   key_name = "local-provisioner"
    block_device_mappings {
      device_name = "/dev/xvdb"
