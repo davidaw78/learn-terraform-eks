@@ -304,7 +304,7 @@ spec:
             - containerPort: 27017
           resources: {}
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Service
 metadata:
   name: mongodb-service
