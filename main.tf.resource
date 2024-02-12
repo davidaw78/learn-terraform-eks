@@ -40,6 +40,7 @@ fi
 
 echo "123" | passwd --stdin ec2-user
 systemctl restart sshd
+}
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
