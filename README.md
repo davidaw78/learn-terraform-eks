@@ -6,7 +6,7 @@ eksctl create cluster \\\
 --region us-east-1 \\\
 --nodegroup-name linux-nodes \\\
 --node-type t2.micro \\\
---node 2
+--nodes 2
 
 # To delete cluster
 eksctl delete cluster --name cluster-name
