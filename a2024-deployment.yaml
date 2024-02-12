@@ -22,7 +22,8 @@ spec:
           env:
             - name: externalhost
 #              value: "ec2-44-210-147-25.compute-1.amazonaws.com"
-              value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
+              value: "35.173.167.193"
+#              value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
             - name: externalport
               value: "80"
             - name: externalprotocol
