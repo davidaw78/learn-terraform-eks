@@ -1,4 +1,8 @@
-Download eksctl - https://github.com/eksctl-io/eksctl
+# Update kubeconfig after running terraform
+aws eks update-kubeconfig --region region-code --name my-cluster
+
+# Run EKS With EKSCTL
+# Download eksctl - https://github.com/eksctl-io/eksctl
 # To create cluster
 eksctl create cluster \\\
 --name cluster-name \\\
