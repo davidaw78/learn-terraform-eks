@@ -324,18 +324,23 @@ resource "kubectl_manifest" "test" {
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: test-ingress
+  name: a2024-ingress
+  namespace: a2024
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /   
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
       - path: /
-        pathType: "Prefix"
+        pathType: Prefix  
         backend:
-          serviceName: test
-          servicePort: 80
+          service:
+            name: a2024-service
+            port: 
+              number: 1741
 YAML
 }
 
