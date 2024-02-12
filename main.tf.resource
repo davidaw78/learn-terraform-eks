@@ -271,10 +271,10 @@ resource "aws_eks_node_group" "private-nodes" {
   #   effect = "NO_SCHEDULE"
   # }
 
-  # launch_template {
-  #   name    = aws_launch_template.eks-with-disks.name
-  #   version = aws_launch_template.eks-with-disks.latest_version
-  # }
+   launch_template {
+     name    = aws_launch_template.eks-with-disks.name
+     version = aws_launch_template.eks-with-disks.latest_version
+   }
 
   depends_on = [
     aws_iam_role_policy_attachment.nodes-AmazonEKSWorkerNodePolicy,
@@ -283,20 +283,20 @@ resource "aws_eks_node_group" "private-nodes" {
   ]
 }
 
-# resource "aws_launch_template" "eks-with-disks" {
-#   name = "eks-with-disks"
+ resource "aws_launch_template" "eks-with-disks" {
+   name = "eks-with-disks"
 
-#   key_name = "local-provisioner"
+   key_name = "local-provisioner"
 
-#   block_device_mappings {
-#     device_name = "/dev/xvdb"
+   block_device_mappings {
+     device_name = "/dev/xvdb"
 
-#     ebs {
-#       volume_size = 50
-#       volume_type = "gp2"
-#     }
-#   }
-# }
+     ebs {
+       volume_size = 20
+       volume_type = "gp2"
+     }
+   }
+ }
 
 data "tls_certificate" "eks" {
   url = aws_eks_cluster.demo.identity[0].oidc[0].issuer
