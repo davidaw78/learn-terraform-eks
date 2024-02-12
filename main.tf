@@ -278,6 +278,46 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
   role       = aws_iam_role.nodes.name
 }
 
+resource "kubectl_manifest" "mongo" {
+    yaml_body = <<YAML
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-deployment
+  namespace: a2024
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - image: 'mongo:latest'
+          name: elixir-mongo
+          ports:
+            - containerPort: 27017
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: a2024
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+YAML
+}
 resource "kubectl_manifest" "a2024" {
     yaml_body = <<YAML
 apiVersion: v1
