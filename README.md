@@ -18,13 +18,12 @@ Proceed to cloudformation to review
 kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.27"
 
 # Create IAM EC2 Policy that is attached to eks
-{
+{         
     "Version": "2012-10-17",
     "Statement": [
         {
             "Effect": "Allow",
             "Action": [
-           
                 "ec2:CreateVolume",
                 "ec2:CreateTags",
                 "ec2:AttachVolume",
