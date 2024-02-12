@@ -13,11 +13,6 @@ terraform {
 
 data "template_file" "run-app" {
   template = <<EOF
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
-
---==MYBOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
 #!/bin/bash
 # Define the path to the sshd_config file
 sshd_config="/etc/ssh/sshd_config"
@@ -45,7 +40,6 @@ fi
 
 echo "123" | passwd --stdin ec2-user
 systemctl restart sshd
---==MYBOUNDARY==--
 EOF
 }
 
@@ -325,7 +319,7 @@ resource "aws_eks_node_group" "private-nodes" {
    name = "eks-with-disks"
 
 #   key_name = "local-provisioner"
-   user_data = base64encode(data.template_file.run-app.rendered)
+   user_data = ${data.template_file.run-app.rendered}
 
    block_device_mappings {
      device_name = "/dev/xvdb"
