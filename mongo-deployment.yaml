@@ -21,14 +21,15 @@ spec:
           ports:
             - containerPort: 27017
           resources: {}
-          volumeMounts:
-            - mountPath: /data/db
-              name: elixirmongodbdata          
+# Remove for fast testing
+#          volumeMounts:
+#            - mountPath: /data/db
+#              name: elixirmongodbdata          
       restartPolicy: Always
-      volumes:
-        - name: elixirmongodbdata
-          persistentVolumeClaim:
-            claimName: elixirmongodbdata
+#      volumes:
+#        - name: elixirmongodbdata
+#          persistentVolumeClaim:
+#            claimName: elixirmongodbdata
 ---
 apiVersion: v1
 kind: Service
@@ -42,18 +43,18 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  creationTimestamp: null
-  labels:
-    io.kompose.service: elixirmongodbdata
-  name: elixirmongodbdata
-  namespace: a2024
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi
+#---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  creationTimestamp: null
+#  labels:
+#    io.kompose.service: elixirmongodbdata
+#  name: elixirmongodbdata
+#  namespace: a2024
+#spec:
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 100Mi
