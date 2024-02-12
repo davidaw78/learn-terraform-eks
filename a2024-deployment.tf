@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "namespace_a2024" {
+resource "kubernetes_manifest" "a2024_namespace" {
   manifest = {
     "apiVersion" = "v1"
     "kind" = "Namespace"
@@ -8,7 +8,7 @@ resource "kubernetes_manifest" "namespace_a2024" {
   }
 }
 
-resource "kubernetes_manifest" "deployment_a2024_a2024_deployment" {
+resource "kubernetes_manifest" "a2024_deployment" {
   manifest = {
     "apiVersion" = "apps/v1"
     "kind" = "Deployment"
@@ -68,7 +68,7 @@ resource "kubernetes_manifest" "deployment_a2024_a2024_deployment" {
   }
 }
 
-resource "kubernetes_manifest" "service_a2024_a2024_service" {
+resource "kubernetes_manifest" "a2024_service" {
   manifest = {
     "apiVersion" = "v1"
     "kind" = "Service"
