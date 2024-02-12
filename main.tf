@@ -278,8 +278,8 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
   role       = aws_iam_role.nodes.name
 }
 
-resource "kubectl_manifest" "mongo" {
-    yaml_body = <<YAML
+resource "kubernetes_manifest" "mongo-statefulset" {
+  manifest = <<EOF
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -302,8 +302,11 @@ spec:
           name: elixir-mongo
           ports:
             - containerPort: 27017
-          resources: {}
----
+EOF
+}
+
+resource "kubernetes_manifest" "mongo-service" {
+  manifest = <<EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -316,33 +319,9 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
-YAML
+EOF
 }
 
-resource "kubectl_manifest" "a2024-ingress" {
-    yaml_body = <<YAML
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: a2024-ingress
-  namespace: a2024
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /   
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix  
-        backend:
-          service:
-            name: a2024-service
-            port: 
-              number: 1741
-YAML
-}
 
 resource "kubernetes_manifest" "a2024-namespace" {
   manifest = <<EOF
