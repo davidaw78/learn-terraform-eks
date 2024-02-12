@@ -12,10 +12,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.0.0"
     }
-    kubectl = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.0.0"
-    }
   }
 }
 
@@ -282,7 +278,7 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
   role       = aws_iam_role.nodes.name
 }
 
-resource "kubectl_manifest" "test" {
+resource "kubernetes_manifest" "test" {
     yaml_body = <<YAML
 apiVersion: networking.k8s.io/v1
 kind: Ingress
