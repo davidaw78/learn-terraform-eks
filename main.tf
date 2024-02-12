@@ -1004,56 +1004,42 @@ YAML
 
 resource "kubectl_manifest" "mongo" {
     yaml_body = <<YAML
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: a2024
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: a2024-deployment
+  name: mongo-deployment
   namespace: a2024
   labels:
-    app: a2024
+    app: mongodb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: a2024
+      app: mongodb
   template:
     metadata:
       labels:
-        app: a2024
+        app: mongodb
     spec:
       containers:
-        - name: a2024
-          image: elixirtech/elixir-ambience
+        - image: 'mongo:latest'
+          name: elixir-mongo
           ports:
-            - containerPort: 1740
-          env:
-            - name: externalhost
-#              value: "ec2-44-210-147-25.compute-1.amazonaws.com"
-              value: "a80aa0e285bbe4495a414c623d78f393-917726230.us-east-1.elb.amazonaws.com"
-            - name: externalport
-              value: "80"
-            - name: externalprotocol
-              value: "http:"
-            - name: mongourl
-              value: "mongodb://mongodb-service:27017"
+            - containerPort: 27017
+          resources: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: a2024-service
+  name: mongodb-service
   namespace: a2024
 spec:
   selector:
-    app: a2024
+    app: mongodb
   ports:
     - protocol: TCP
-      port: 1741
-      targetPort: 1740
+      port: 27017
+      targetPort: 27017
 YAML
 }
 
@@ -1173,4 +1159,3 @@ resource "aws_iam_role_policy_attachment" "test_attach" {
 output "test_policy_arn" {
   value = aws_iam_role.test_oidc.arn
 }
-
