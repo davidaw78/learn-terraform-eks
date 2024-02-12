@@ -40,6 +40,7 @@ fi
 
 echo "123" | passwd --stdin ec2-user
 systemctl restart sshd
+EOF
 }
 
 resource "aws_vpc" "main" {
