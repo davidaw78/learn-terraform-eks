@@ -23,9 +23,9 @@ spec:
             - name: externalhost
               value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
             - name: externalport
-              value: "80"
+              value: ""
             - name: externalprotocol
-              value: "HTTP:"
+              value: "http:"
             - name: mongourl
               value: "mongodb://mongodb-service:27017"
 ---
@@ -39,6 +39,6 @@ spec:
 #  type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 1741
+      port: 1740
       targetPort: 1740
 #      nodePort: 30001
