@@ -21,7 +21,7 @@ spec:
             - containerPort: 1740
           env:
             - name: externalhost
-              value: "af7a211710b3d4a12ae860cbfa5b91a3-671372143.us-east-1.elb.amazonaws.com"
+              value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
             - name: externalport
               value: "80"
             - name: externalprotocol
