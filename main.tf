@@ -13,7 +13,7 @@ terraform {
       version = ">= 2.0.0"
     }
     kubectl = {
-      source  = "hashicorp/kubectl"
+      source  = "hashicorp/kubernetes"
       version = ">= 2.0.0"
     }
   }
