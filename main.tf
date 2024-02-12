@@ -279,7 +279,7 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
 }
 
 resource "kubernetes_manifest" "mongo-statefulset" {
-  manifest = <<EOF
+  manifest = {
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -323,28 +323,35 @@ EOF
 }
 
 resource "kubernetes_manifest" "a2024-ingress" {
-  manifest = <<EOF
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: a2024-ingress
-  namespace: a2024
-  annotations:
+  manifest = {
+apiVersion = networking.k8s.io/v1
+kind = Ingress
+metadata = {
+  name = a2024-ingress
+  namespace = a2024
+  annotations = {
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix  
-        backend:
-          service:
-            name: a2024-service
-            port:
-              number: 1741
-EOF
+  }
+}
+spec = {
+  ingressClassName = nginx
+  rules = {
+    http = {
+      paths = {
+        path = "/"
+        pathType = Prefix  
+        backend = {
+          service {
+            name = a2024-service
+            port = {
+              number = 1741
+            }
+          }
+      }
+    }
+  }
+}
 }
 
 resource "kubernetes_manifest" "a2024-namespace" {
