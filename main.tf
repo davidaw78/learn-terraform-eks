@@ -1004,42 +1004,56 @@ YAML
 
 resource "kubectl_manifest" "mongo" {
     yaml_body = <<YAML
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: mongo-deployment
+  name: a2024
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: a2024-deployment
   namespace: a2024
   labels:
-    app: mongodb
+    app: a2024
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: a2024
   template:
     metadata:
       labels:
-        app: mongodb
+        app: a2024
     spec:
       containers:
-        - image: 'mongo:latest'
-          name: elixir-mongo
+        - name: a2024
+          image: elixirtech/elixir-ambience
           ports:
-            - containerPort: 27017
-          resources: {}
+            - containerPort: 1740
+          env:
+            - name: externalhost
+#              value: "ec2-44-210-147-25.compute-1.amazonaws.com"
+              value: "a80aa0e285bbe4495a414c623d78f393-917726230.us-east-1.elb.amazonaws.com"
+            - name: externalport
+              value: "80"
+            - name: externalprotocol
+              value: "http:"
+            - name: mongourl
+              value: "mongodb://mongodb-service:27017"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-service
+  name: a2024-service
   namespace: a2024
 spec:
   selector:
-    app: mongodb
+    app: a2024
   ports:
     - protocol: TCP
-      port: 27017
-      targetPort: 27017
+      port: 1741
+      targetPort: 1740
 YAML
 }
 
