@@ -1,12 +1,11 @@
 Download eksctl - https://github.com/eksctl-io/eksctl
 # To create cluster
-eksctl create cluster \\
-
+eksctl create cluster \\\
 --name cluster-name \\\
---version 1.17 \\
---region us-east-1 \\
---nodegroup-name linux-nodes \\
---node-type t2.micro \\
+--version 1.17 \\\
+--region us-east-1 \\\
+--nodegroup-name linux-nodes \\\
+--node-type t2.micro \\\
 --node 2
 
 # To delete cluster
