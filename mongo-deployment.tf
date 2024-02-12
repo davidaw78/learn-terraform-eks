@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "statefulset_a2024_mongo_deployment" {
+resource "kubernetes_manifest" "mongo_deployment" {
   manifest = {
     "apiVersion" = "apps/v1"
     "kind" = "StatefulSet"
@@ -42,7 +42,7 @@ resource "kubernetes_manifest" "statefulset_a2024_mongo_deployment" {
   }
 }
 
-resource "kubernetes_manifest" "service_a2024_mongodb_service" {
+resource "kubernetes_manifest" "mongodb_service" {
   manifest = {
     "apiVersion" = "v1"
     "kind" = "Service"
