@@ -317,10 +317,8 @@ resource "aws_eks_node_group" "private-nodes" {
 
  resource "aws_launch_template" "eks-with-disks" {
    name = "eks-with-disks"
-
+   user_data = base64encode("data.template_file.run-app.rendered")
 #   key_name = "local-provisioner"
-   user_data = base64encode(data.template_file.run-app.rendered)
-
    block_device_mappings {
      device_name = "/dev/xvdb"
 
