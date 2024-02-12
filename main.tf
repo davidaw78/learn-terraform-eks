@@ -319,7 +319,7 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "test" {
+resource "kubectl_manifest" "a2024-ingress" {
     yaml_body = <<YAML
 apiVersion: networking.k8s.io/v1
 kind: Ingress
