@@ -37,9 +37,7 @@ metadata:
 spec:
   selector:
     app: a2024
-#  type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 1740
+      port: 1741
       targetPort: 1740
-#      nodePort: 30001
