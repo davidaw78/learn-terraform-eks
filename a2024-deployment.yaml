@@ -23,7 +23,7 @@ spec:
             - name: externalhost
               value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
             - name: externalport
-              value: ""
+              value: "80"
             - name: externalprotocol
               value: "http:"
             - name: mongourl
