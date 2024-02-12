@@ -1,6 +1,6 @@
 Download eksctl - https://github.com/eksctl-io/eksctl
 # To create cluster
-eksctl create cluster \
+eksctl create cluster \\
 --name cluster-name \
 --version 1.17 \
 --region us-east-1 \
