@@ -10,8 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: ec2-44-210-147-25.compute-1.amazonaws.com
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix  
@@ -19,4 +18,4 @@ spec:
           service:
             name: a2024-service
             port: 
-              number: 1741
+              number: 80
