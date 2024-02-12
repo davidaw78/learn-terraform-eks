@@ -318,6 +318,27 @@ spec:
       targetPort: 27017
 YAML
 }
+
+resource "kubectl_manifest" "test" {
+    yaml_body = <<YAML
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: "Prefix"
+        backend:
+          serviceName: test
+          servicePort: 80
+YAML
+}
+
 resource "kubectl_manifest" "a2024" {
     yaml_body = <<YAML
 apiVersion: v1
