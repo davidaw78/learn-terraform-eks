@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "ingress_a2024_a2024_ingress" {
+resource "kubernetes_manifest" "a2024_ingress" {
   manifest = {
     "apiVersion" = "networking.k8s.io/v1"
     "kind" = "Ingress"
