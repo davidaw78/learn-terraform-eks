@@ -5,8 +5,7 @@ metadata:
   namespace: a2024
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    
+    nginx.ingress.kubernetes.io/rewrite-target: /   
 spec:
   ingressClassName: nginx
   rules:
