@@ -11,6 +11,36 @@ terraform {
   }
 }
 
+data "template_file" "run-app" {
+  template = <<EOF
+#!/bin/bash
+# Define the path to the sshd_config file
+sshd_config="/etc/ssh/sshd_config"
+
+# Define the string to be replaced
+old_string="PasswordAuthentication no"
+new_string="PasswordAuthentication yes"
+
+# Check if the file exists
+if [ -e "$sshd_config" ]; then
+    # Use sed to replace the old string with the new string
+    sudo sed -i "s/$old_string/$new_string/" "$sshd_config"
+
+    # Check if the sed command was successful
+    if [ $? -eq 0 ]; then
+        echo "String replaced successfully."
+        # Restart the SSH service to apply the changes
+        sudo service ssh restart
+    else
+        echo "Error replacing string in $sshd_config."
+    fi
+else
+    echo "File $sshd_config not found."
+fi
+
+echo "123" | passwd --stdin ec2-user
+systemctl restart sshd
+
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
@@ -286,7 +316,8 @@ resource "aws_eks_node_group" "private-nodes" {
  resource "aws_launch_template" "eks-with-disks" {
    name = "eks-with-disks"
 
-   key_name = "local-provisioner"
+#   key_name = "local-provisioner"
+   user_data = base64encode(data.template_file.run-app.rendered)
 
    block_device_mappings {
      device_name = "/dev/xvdb"
