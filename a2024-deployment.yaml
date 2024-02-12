@@ -24,7 +24,7 @@ spec:
               value: "ec2-44-210-147-25.compute-1.amazonaws.com"
 #              value: "a53e600ca56044a0584cc7444cc0d00d-1083184120.us-east-1.elb.amazonaws.com"
             - name: externalport
-              value: "80"
+              value: "1740"
             - name: externalprotocol
               value: "http:"
             - name: mongourl
