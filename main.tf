@@ -40,7 +40,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: a2024-deployment
-#  namespace: a2024
   labels:
     app: a2024
 spec:
@@ -60,7 +59,6 @@ spec:
             - containerPort: 1740
           env:
             - name: externalhost
-#              value: "ec2-44-210-147-25.compute-1.amazonaws.com"
               value: "a80aa0e285bbe4495a414c623d78f393-917726230.us-east-1.elb.amazonaws.com"
             - name: externalport
               value: "80"
@@ -73,7 +71,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: a2024-service
-  namespace: a2024
 spec:
   selector:
     app: a2024
@@ -84,13 +81,36 @@ spec:
 YAML
 }
 
+resource "kubectl_manifest" "a2024-ingress"{
+    yaml_body = <<YAML
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: a2024-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /   
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix  
+        backend:
+          service:
+            name: a2024-service
+            port: 
+              number: 1741
+YAML
+}
+
 resource "kubectl_manifest" "mongo-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo-deployment
-  # namespace: a2024
   labels:
     app: mongodb
 spec:
@@ -109,21 +129,11 @@ spec:
           ports:
             - containerPort: 27017
           resources: {}
-# Remove for fast testing
-#          volumeMounts:
-#            - mountPath: /data/db
-#              name: elixirmongodbdata          
-      restartPolicy: Always
-#      volumes:
-#        - name: elixirmongodbdata
-#          persistentVolumeClaim:
-#            claimName: elixirmongodbdata
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
-  namespace: a2024
 spec:
   selector:
     app: mongodb
