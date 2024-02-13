@@ -17,12 +17,17 @@ terraform {
 
 resource "null_resource" "kubectl" {
   provisioner "local-exec" {
-        command = "aws eks update-kubeconfig --region ${provider.aws.region}  --name ${var.cluster-name}"
+        command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
 }
 
 variable "cluster-name" {
   default = "terraform-eks-demo"
+}
+
+variable "region" {
+  type    = string
+  default = "us-east-1"
 }
 
 # Setup VPC and Subnet
