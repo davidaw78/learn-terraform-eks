@@ -1,13 +1,8 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: a2024
----  
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: a2024-deployment
-#  namespace: a2024
+  namespace: a2024
   labels:
     app: a2024
 spec:
@@ -39,7 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: a2024-service
-#  namespace: a2024
+  namespace: a2024
 spec:
   selector:
     app: a2024
