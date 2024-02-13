@@ -249,7 +249,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 
 # Create private facing security group
 resource "aws_security_group" "terraform-eks-private-facing-sg" {
-  vpc_id = aws_vpc.terraform-default-vpc-app.id
+  vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "terraform-eks-private-facing-sg"
 
   ingress {
