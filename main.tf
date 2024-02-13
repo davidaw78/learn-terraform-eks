@@ -243,6 +243,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
   }
 
   tags = {
-    Name = "terraform-public-facing-sg-app"
+    Name = ${resource.aws_security_group.terraform-eks-public-facing-sg}
+#    Name = "terraform-public-facing-sg-app"
   }
 }
