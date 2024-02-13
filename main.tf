@@ -1,6 +1,6 @@
 variable "cluster-name" {
   default = "terraform-eks-demo"
-  type    = "string"
+  type    = string
 }
 
 # Will explore what does shared mean.
