@@ -31,7 +31,7 @@ resource "null_resource" "kubectl" {
 }
 
 output "endpoint" {
-  value = data.aws_eks_cluster.demo.endpoint
+  value = aws_eks_cluster.demo.endpoint
 }
 
 output "kubeconfig-certificate-authority-data" {
