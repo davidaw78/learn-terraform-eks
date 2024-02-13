@@ -28,8 +28,8 @@ resource "kubernetes_manifest" "external_secrets_cluster_store" {
     spec:
       provider:
         azurekv:          
-          tenantId: "${from some tf output}"          
-          vaultUrl: "${from some tf output}"
+          tenantId: "$${from some tf output}"          
+          vaultUrl: "$${from some tf output}"
           authSecretRef:
             clientId:
               name: external-secrets-vault-credentials
