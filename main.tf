@@ -30,45 +30,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
-resource "kubectl_manifest" "mongo-development" {
-    yaml_body = <<YAML
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongo-deployment
-#  namespace: a2024
-  labels:
-    app: mongodb
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mongodb
-  template:
-    metadata:
-      labels:
-        app: mongodb
-    spec:
-      containers:
-        - image: 'mongo:latest'
-          name: elixir-mongo
-          ports:
-            - containerPort: 27017
-          resources: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-#  namespace: a2024
-spec:
-  selector:
-    app: mongodb
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-YAML
+resource "null_resource" "run-kubectl" {
+  provisioner "local-exec" {
+        command = <<-EOT
+      ./run-kubectl.sh
+    EOT
+  }
 }
 
 output "endpoint" {
