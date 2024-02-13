@@ -43,13 +43,13 @@ resource "null_resource" "ingress-nginx" {
 
 resource "null_resource" "a2024-deployment" {
   provisioner "local-exec" {
-        command = "kubectl apply -f 2024-deployment.yaml"
+        command = "kubectl apply -f './2024-deployment.yaml'"
   }
 }
 
 resource "null_resource" "mongo-deployment" {
   provisioner "local-exec" {
-        command = "kubectl apply -f ./mongo-deployment.yaml"
+        command = "kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml"
   }
 }
 
