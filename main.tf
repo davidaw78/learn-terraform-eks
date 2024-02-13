@@ -194,7 +194,7 @@ resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
 
 # Setup AWS IAM Role for cluster
 resource "aws_iam_role" "terraform-eks-role-cluster" {
-  name = "${var.cluster-name}"
+  name = var.cluster-name
 
   assume_role_policy = <<POLICY
 {
