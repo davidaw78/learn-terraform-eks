@@ -19,54 +19,28 @@ terraform {
   }
 }
 
-resource "kubernetes_manifest" "mongo-deployment" {
-    manifest = yamldecode(<<-EOF
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongo-deployment
-  # namespace: a2024
-  labels:
-    app: mongodb
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: "Prefix"
-        backend:
-          serviceName: test
-          servicePort: 80
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mongodb
-  template:
+resource "kubernetes_manifest" "external_secrets_cluster_store" {
+  manifest = yamldecode(<<-EOF
+    apiVersion: external-secrets.io/v1alpha1
+    kind: ClusterSecretStore
     metadata:
-      labels:
-        app: mongodb
+      name: cluster-store
     spec:
-      containers:
-        - image: 'mongo:latest'
-          name: elixir-mongo
-          ports:
-            - containerPort: 27017
-          resources: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-  namespace: a2024
-spec:
-  selector:
-    app: mongodb
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-EOF
-)
+      provider:
+        azurekv:          
+          tenantId: "${from some tf output}"          
+          vaultUrl: "${from some tf output}"
+          authSecretRef:
+            clientId:
+              name: external-secrets-vault-credentials
+              namespace: external-secrets
+              key: ClientID
+            clientSecret:
+              name: external-secrets-vault-credentials
+              namespace: external-secrets
+              key: ClientSecret
+    EOF
+  )
 }
 
 data "template_file" "run-app" {
