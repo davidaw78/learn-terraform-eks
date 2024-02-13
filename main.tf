@@ -15,6 +15,12 @@ terraform {
   }
 }
 
+resource "null_resource" "kubectl" {
+  provisioner "local-exec" {
+        command = "aws eks update-kubeconfig --region ${var.region}  --name ${aws_eks_cluster.demo.name}"
+  }
+}
+
 variable "cluster-name" {
   default = "terraform-eks-demo"
 }
