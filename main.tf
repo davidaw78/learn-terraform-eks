@@ -35,6 +35,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "null_resource" "a2024-namespace" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/../a2024-namespace.yaml"
+  }
+}
+
 resource "null_resource" "ingress-nginx" {
   provisioner "local-exec" {
         command = "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml"
