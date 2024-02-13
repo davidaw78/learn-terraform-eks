@@ -21,7 +21,7 @@ resource "aws_subnet" "terraform-eks-demo-subnet" {
 
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
   cidr_block        = "10.0.${count.index}.0/24"
-  vpc_id            = "${aws_vpc.demo.id}"
+  vpc_id            = "${aws_vpc.terraform-eks-demo-vpc.id}"
 
   tags = "${
     map(
@@ -32,7 +32,7 @@ resource "aws_subnet" "terraform-eks-demo-subnet" {
 }
 
 resource "aws_internet_gateway" "terraform-eks-demo-igw" {
-  vpc_id = "${aws_vpc.terraform-eks-demo.id}"
+  vpc_id = "${aws_vpc.terraform-eks-demo-vpc.id}"
 
   tags = {
     Name = "terraform-eks-demo-igw"
