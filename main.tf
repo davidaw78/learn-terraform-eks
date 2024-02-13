@@ -66,7 +66,11 @@ spec:
               value: "http:"
             - name: mongourl
               value: "mongodb://mongodb-service:27017"
----
+YAML
+}
+
+resource "kubectl_manifest" "a2024-ingress"{
+    yaml_body = <<YAML
 apiVersion: v1
 kind: Service
 metadata:
@@ -80,7 +84,6 @@ spec:
       targetPort: 1740
 YAML
 }
-
 resource "kubectl_manifest" "a2024-ingress"{
     yaml_body = <<YAML
 apiVersion: networking.k8s.io/v1
