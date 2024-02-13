@@ -19,6 +19,22 @@ terraform {
   }
 }
 
+output "region" {
+  description = "AWS region"
+  value       = var.region
+}
+
+output "cluster_name" {
+  description = "Kubernetes Cluster Name"
+  value       = local.cluster_name
+}
+
+resource "null_resource" "kubectl" {
+    provisioner "local-exec" {
+        command = "aws eks --region ${var.region} update-kubeconfig --name ${local.cluster_name}"
+    }
+}
+
 resource "kubectl_manifest" "mongo-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
