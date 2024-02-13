@@ -225,16 +225,21 @@ resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSS
 # Setup cluster
 resource "aws_eks_cluster" "terraform-eks-demo-cluster" {
   name            = var.cluster-name
-  role_arn        = "${aws_iam_role.terraform-eks-demo-role-cluster.arn}"
+  role_arn        = "${aws_iam_role.terraform-eks-demo-role.arn}"
 
   vpc_config {
-    security_group_ids = ["${aws_security_group.demo-cluster.id}"]
-    subnet_ids         = ["${aws_subnet.demo.*.id}"]
+    security_group_ids = [
+      aws_security_group.terraform-eks-private-facing-sg.id
+    ]
+    subnet_ids         = [
+      aws_subnet.terraform-eks-private-us-east-1b.id,
+      aws_subnet.terraform-eks-private-us-east-1c.id
+    ]
   }
 
   depends_on = [
-    "aws_iam_role_policy_attachment.demo-cluster-AmazonEKSClusterPolicy",
-    "aws_iam_role_policy_attachment.demo-cluster-AmazonEKSServicePolicy"
+    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSServicePolicy
   ]
 }
 
