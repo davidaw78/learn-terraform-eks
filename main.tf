@@ -133,7 +133,11 @@ spec:
           ports:
             - containerPort: 27017
           resources: {}
----
+YAML
+}
+
+resource "kubectl_manifest" "mongo-service" {
+    yaml_body = <<YAML
 apiVersion: v1
 kind: Service
 metadata:
