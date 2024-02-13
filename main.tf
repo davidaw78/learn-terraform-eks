@@ -19,6 +19,10 @@ terraform {
   }
 }
 
+local {
+  cluster_name = demo
+}
+
 output "region" {
   description = "AWS region"
   value       = var.region
