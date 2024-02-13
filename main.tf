@@ -221,3 +221,28 @@ resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSS
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
   role       = "${aws_iam_role.terraform-eks-demo-role.name}"
 }
+
+# Create public facing security group
+resource "aws_security_group" "terraform-eks-public-facing-sg" {
+  vpc_id = aws_vpc.terraform-eks-vpc.id
+  name   = "terraform-eks-public-facing-sg"
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    # Allow traffic from public subnet
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "terraform-public-facing-sg-app"
+  }
+}
