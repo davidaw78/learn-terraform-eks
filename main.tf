@@ -36,7 +36,7 @@ resource "null_resource" "kubectl" {
 
 resource "kubectl_manifest" "a2024-deployment" {
     yaml_body = <<YAML
-apiVersion: v1
+apiVersion: apps/v1
 kind: Namespace
 metadata:
   name: a2024
