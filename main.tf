@@ -34,23 +34,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
-
-resource "kubectl_manifest" "a2024-namespace" {
-    yaml_body = <<YAML
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: a2024
-YAML
-}
-
 resource "kubectl_manifest" "a2024-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: a2024-deployment
-  namespace = a2024
   labels:
     app: a2024
 spec:
@@ -80,13 +69,12 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "a2024-service"{
+resource "kubectl_manifest" "a2024-service" {
     yaml_body = <<YAML
 apiVersion: v1
 kind: Service
 metadata:
   name: a2024-service
-  namespace = a2024
 spec:
   selector:
     app: a2024
@@ -96,13 +84,13 @@ spec:
       targetPort: 1740
 YAML
 }
-resource "kubectl_manifest" "a2024-ingress"{
+
+resource "kubectl_manifest" "a2024-ingress" {
     yaml_body = <<YAML
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: a2024-ingress
-  namespace = a2024
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /   
@@ -121,29 +109,12 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "mongo-service" {
-    yaml_body = <<YAML
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-spec:
-  selector:
-    app: mongodb
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-YAML
-}
-
 resource "kubectl_manifest" "mongo-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo-deployment
-  namespace = a2024
   labels:
     app: mongodb
 spec:
@@ -162,6 +133,18 @@ spec:
           ports:
             - containerPort: 27017
           resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
 YAML
 }
 
