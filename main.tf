@@ -8,7 +8,7 @@ resource "aws_vpc" "terraform-eks-demo-vpc" {
   cidr_block = "10.0.0.0/16" # 65,534 ip addresses
 # What is tomap?
   tags = "${
-    tomap(
+    map(
      "Name", "terraform-eks-demo-node-vpc",
      "kubernetes.io/cluster/${var.cluster-name}", "shared",
     )
