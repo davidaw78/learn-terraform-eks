@@ -24,12 +24,10 @@ resource "aws_subnet" "terraform-eks-demo-subnet" {
   cidr_block        = "10.0.${count.index}.0/24"
   vpc_id            = "${aws_vpc.terraform-eks-demo-vpc.id}"
 
-  tags = "${
-    map(
-     "Name", "terraform-eks-demo-node-subnet",
-     "kubernetes.io/cluster/${var.cluster-name}", "shared",
-    )
-  }"
+  tags = {
+    Name = "terraform-eks-demo-node-subnet",
+    "kubernetes.io/cluster/${var.cluster-name}", "shared",
+  }
 }
 
 resource "aws_internet_gateway" "terraform-eks-demo-igw" {
