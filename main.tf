@@ -12,80 +12,148 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.0"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.0"
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
     }
   }
 }
 
-resource "kubernetes_manifest" "external_secrets_cluster_store" {
-  manifest = yamldecode(<<-EOF
-    apiVersion: external-secrets.io/v1alpha1
-    kind: ClusterSecretStore
-    metadata:
-      name: cluster-store
-    spec:
-      provider:
-        azurekv:          
-          tenantId: "$${from some tf output}"          
-          vaultUrl: "$${from some tf output}"
-          authSecretRef:
-            clientId:
-              name: external-secrets-vault-credentials
-              namespace: external-secrets
-              key: ClientID
-            clientSecret:
-              name: external-secrets-vault-credentials
-              namespace: external-secrets
-              key: ClientSecret
-    EOF
-  )
-  wait {
-    fields = {
-      # Check the phase of a pod
-      "status.phase" = "Running"
+resource "kubectl_manifest" "test" {
+    yaml_body = <<YAML
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: "Prefix"
+        backend:
+          serviceName: test
+          servicePort: 80
+YAML
+}
 
-      # Check a container's status
-      "status.containerStatuses[0].ready" = "true",
+resource "aws_eks_node_group" "private-nodes" {
+  cluster_name    = aws_eks_cluster.demo.name
+  node_group_name = "private-nodes"
+  node_role_arn   = aws_iam_role.nodes.arn
+
+  subnet_ids = [
+    aws_subnet.private-us-east-1a.id,
+    aws_subnet.private-us-east-1b.id
+  ]
+
+  capacity_type  = "ON_DEMAND"
+  instance_types = ["t3.small"]
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 5
+    min_size     = 0
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    role = "general"
+  }
+
+  # taint {
+  #   key    = "team"
+  #   value  = "devops"
+  #   effect = "NO_SCHEDULE"
+  # }
+
+   launch_template {
+     name    = aws_launch_template.eks-with-disks.name
+     version = aws_launch_template.eks-with-disks.latest_version
+   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.nodes-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.nodes-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.nodes-AmazonEC2ContainerRegistryReadOnly,
+  ]
+}
+
+ resource "aws_launch_template" "eks-with-disks" {
+   name = "eks-with-disks"
+#   user_data = base64encode("data.template_file.run-app.rendered")
+   key_name = "vpc-workshop"
+   block_device_mappings {
+     device_name = "/dev/xvdb"
+
+     ebs {
+       volume_size = 20
+       volume_type = "gp2"
+     }
+   }
+ }
+
+data "tls_certificate" "eks" {
+  url = aws_eks_cluster.demo.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.demo.identity[0].oidc[0].issuer
+}
+
+data "aws_iam_policy_document" "test_oidc_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:default:aws-test"]
+    }
+
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      type        = "Federated"
     }
   }
 }
 
-data "template_file" "run-app" {
-  template = <<-EOF
-Content-Type: multipart/mixed; boundary="==BOUNDARY=="
---==BOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
-#!/bin/bash
-# Define the path to the sshd_config file
-sshd_config="/etc/ssh/sshd_config"
+resource "aws_iam_role" "test_oidc" {
+  assume_role_policy = data.aws_iam_policy_document.test_oidc_assume_role_policy.json
+  name               = "test-oidc"
+}
 
-# Define the string to be replaced
-old_string="PasswordAuthentication no"
-new_string="PasswordAuthentication yes"
+resource "aws_iam_policy" "test-policy" {
+  name = "test-policy"
 
-# Check if the file exists
-if [ -e "$sshd_config" ]; then
-    # Use sed to replace the old string with the new string
-    sudo sed -i "s/$old_string/$new_string/" "$sshd_config"
+  policy = jsonencode({
+    Statement = [{
+      Action = [
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation"
+      ]
+      Effect   = "Allow"
+      Resource = "arn:aws:s3:::*"
+    }]
+    Version = "2012-10-17"
+  })
+}
 
-    # Check if the sed command was successful
-    if [ $? -eq 0 ]; then
-        echo "String replaced successfully."
-        # Restart the SSH service to apply the changes
-        sudo service ssh restart
-    else
-        echo "Error replacing string in $sshd_config."
-    fi
-else
-    echo "File $sshd_config not found."
-fi
+resource "aws_iam_role_policy_attachment" "test_attach" {
+  role       = aws_iam_role.test_oidc.name
+  policy_arn = aws_iam_policy.test-policy.arn
+}
 
-echo "123" | passwd --stdin ec2-user
-systemctl restart sshd
---==BOUNDARY==--
-EOF
+output "test_policy_arn" {
+  value = aws_iam_role.test_oidc.arn
 }
 
 resource "aws_vpc" "main" {
