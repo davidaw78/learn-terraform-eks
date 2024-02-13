@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-  config_path = "/home/cloudshell-user/.kube/config"
+  config_path = "/home/cloudshell-user/learn-terraform-eks/kubeconfig"
 }
 
 terraform {
