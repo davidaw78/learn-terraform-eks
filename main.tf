@@ -34,6 +34,15 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "kubectl_manifest" "a2024-namespace" {
+    yaml_body = <<YAML
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: a2024
+YAML
+}
+
 resource "kubectl_manifest" "a2024-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
