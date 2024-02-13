@@ -19,7 +19,7 @@ terraform {
   }
 }
 
-local {
+locals {
   cluster_name = demo
 }
 
