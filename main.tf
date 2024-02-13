@@ -242,8 +242,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = ${resource.aws_security_group.terraform-eks-public-facing-sg.name}
-#    Name = "terraform-public-facing-sg-app"
+  tags = {  
+    Name = "terraform-eks-public-facing-sg"
   }
 }
