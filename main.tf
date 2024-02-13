@@ -1,55 +1,82 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
 variable "cluster-name" {
   default = "terraform-eks-demo"
 }
 
-# Will explore what does shared mean.
-# Setup VPC layer
-
-data "aws_availability_zones" "available" {}
-
-resource "aws_vpc" "terraform-eks-demo-vpc" {
-  cidr_block = "10.0.0.0/16" # 65,534 ip addresses
-# What is tomap?
-  tags = {
-    Name = "terraform-eks-demo-node-vpc",
-    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-  }
-}
-
-# Count = 2 means produce 2 subnet?
-resource "aws_subnet" "terraform-eks-demo-subnet" {
-  count = 2
-
-  availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
-  cidr_block        = "10.0.${count.index}.0/24"
-  vpc_id            = "${aws_vpc.terraform-eks-demo-vpc.id}"
+resource "aws_vpc" "terraform-eks-main" {
+  cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "terraform-eks-demo-node-subnet",
-    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    Name = "main"
   }
 }
 
-resource "aws_internet_gateway" "terraform-eks-demo-igw" {
-  vpc_id = "${aws_vpc.terraform-eks-demo-vpc.id}"
+resource "aws_internet_gateway" "terraform-eks-igw" {
+  vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "terraform-eks-demo-igw"
+    Name = "terraform-eks-igw"
   }
 }
 
-resource "aws_route_table" "terraform-eks-demo-rt" {
-  vpc_id = "${aws_vpc.terraform-eks-demo-vpc.id}"
+resource "aws_subnet" "terraform-eks-private-us-east-1a" {
+  vpc_id            = aws_vpc.terraform-eks-main.id
+  cidr_block        = "10.0.0.0/19"
+  availability_zone = "us-east-1a"
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.terraform-eks-demo-igw.id}"
+  tags = {
+    "Name"                            = "terraform-eks-private-us-east-1a"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/demo"      = "owned"
   }
 }
 
-resource "aws_route_table_association" "terraform-eks-demo-rta" {
-  count = 2
+resource "aws_subnet" "terraform-eks-private-us-east-1b" {
+  vpc_id            = aws_vpc.terraform-eks-main.id
+  cidr_block        = "10.0.32.0/19"
+  availability_zone = "us-east-1b"
 
-  subnet_id      = "${aws_subnet.terraform-eks-demo-subnet.*.id[count.index]}"
-  route_table_id = "${aws_route_table.terraform-eks-demo-rt.id}"
+  tags = {
+    "Name"                            = "terraform-eks-private-us-east-1b"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/demo"      = "owned"
+  }
+}
+
+resource "aws_subnet" "terraform-eks-public-us-east-1a" {
+  vpc_id                  = aws_vpc.terraform-eks-main.id
+  cidr_block              = "10.0.64.0/19"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    "Name"                       = "terraform-eks-public-us-east-1a"
+    "kubernetes.io/role/elb"     = "1"
+    "kubernetes.io/cluster/demo" = "owned"
+  }
+}
+
+resource "aws_subnet" "terraform-eks-public-us-east-1b" {
+  vpc_id                  = aws_vpc.terraform-eks-main.id
+  cidr_block              = "10.0.96.0/19"
+  availability_zone       = "us-east-1b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    "Name"                       = "terraform-eks-public-us-east-1b"
+    "kubernetes.io/role/elb"     = "1"
+    "kubernetes.io/cluster/demo" = "owned"
+  }
 }
