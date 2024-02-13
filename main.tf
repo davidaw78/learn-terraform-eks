@@ -2,9 +2,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
+provider "kubernetes" {
+  config_path = "/home/cloudshell-user/.kube/config"
+}
+
 terraform {
   required_providers {
-    config_path = "/home/cloudshell-user/.kube/config"
     aws = {
       source  = "hashicorp/aws"
       version = "~> 3.0"
