@@ -32,7 +32,7 @@ resource "null_resource" "kubectl" {
 
 resource "null_resource" "mongo-developement" {
   provisioner "local-exec" {
-        command = "kubectl apply -f ${path.module}/learn-terraform-eks/mongo-deployment.yaml"
+        command = "kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml"
   }
 }
 
