@@ -94,7 +94,6 @@ resource "aws_subnet" "terraform-eks-public-us-east-2a" {
   }
 }
 
-
 resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
   cidr_block        = "10.0.3.0/24"
@@ -107,9 +106,21 @@ resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   }
 }
 
-resource "aws_subnet" "terraform-eks-private-us-east-1c" {
+resource "aws_subnet" "terraform-eks-private-us-east-2b" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
   cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1b"
+
+  tags = {
+    "Name"                            = "terraform-eks-private-us-east-2b"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/demo"      = "owned"
+  }
+}
+
+resource "aws_subnet" "terraform-eks-private-us-east-1c" {
+  vpc_id            = aws_vpc.terraform-eks-vpc.id
+  cidr_block        = "10.0.5.0/24"
   availability_zone = "us-east-1a"
 
   tags = {
@@ -233,6 +244,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
     ]
     subnet_ids         = [
       aws_subnet.terraform-eks-private-us-east-1b.id,
+      aws_subnet.terraform-eks-private-us-east-2b.id,
       aws_subnet.terraform-eks-private-us-east-1c.id
     ]
   }
