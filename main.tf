@@ -41,6 +41,15 @@ resource "kubernetes_manifest" "external_secrets_cluster_store" {
               key: ClientSecret
     EOF
   )
+  wait {
+    fields = {
+      # Check the phase of a pod
+      "status.phase" = "Running"
+
+      # Check a container's status
+      "status.containerStatuses[0].ready" = "true",
+    }
+  }
 }
 
 data "template_file" "run-app" {
