@@ -19,6 +19,12 @@ terraform {
   }
 }
 
+resource "null_resource" "kubectl" {
+    provisioner "local-exec" {
+        command = "aws eks --region us-east-1 update-kubeconfig --name demo"
+    }
+}
+
 resource "kubectl_manifest" "mongo-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
