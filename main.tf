@@ -11,6 +11,7 @@ terraform {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.0"
+      config_path = "~/.kube/config"
     }
   }
 }
