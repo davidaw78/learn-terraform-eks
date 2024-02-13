@@ -4,6 +4,7 @@ provider "aws" {
 
 terraform {
   required_providers {
+    config_path = "~/.kube/config"
     aws = {
       source  = "hashicorp/aws"
       version = "~> 3.0"
@@ -11,7 +12,6 @@ terraform {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.0"
-      config_path = "~/.kube/config"
     }
   }
 }
