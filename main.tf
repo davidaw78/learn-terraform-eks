@@ -30,7 +30,7 @@ variable "region" {
 
 resource "null_resource" "kubectl" {
   provisioner "local-exec" {
-        command = "aws eks --region ${var.region} update-kubeconfig --name ${local.cluster_name}"
+        command = "aws eks update-kubeconfig --region ${var.region}  --name ${local.cluster_name}"
   }
 }
 
