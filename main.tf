@@ -85,6 +85,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: a2024-service
+  namespace: a2024
 spec:
   selector:
     app: a2024
@@ -101,6 +102,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: a2024-ingress
+  namespace: a2024
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /   
@@ -125,6 +127,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo-deployment
+  namespace: a2024
   labels:
     app: mongodb
 spec:
@@ -152,6 +155,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
+  namespace: a2024
 spec:
   selector:
     app: mongodb
