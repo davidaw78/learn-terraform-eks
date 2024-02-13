@@ -9,11 +9,60 @@ terraform {
       version = "~> 3.0"
     }
     kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.0"
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
       config_path = "~/.kube/config"
     }
   }
+}
+
+resource "kubernetes_manifest" "mongo-deployment" {
+    yaml_body = <<YAML
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-deployment
+  # namespace: a2024
+  labels:
+    app: mongodb
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: "Prefix"
+        backend:
+          serviceName: test
+          servicePort: 80
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - image: 'mongo:latest'
+          name: elixir-mongo
+          ports:
+            - containerPort: 27017
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: a2024
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+YAML
 }
 
 data "template_file" "run-app" {
