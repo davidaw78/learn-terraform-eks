@@ -19,13 +19,13 @@ terraform {
   }
 }
 
-resource "kubectl_manifest" "test" {
+resource "kubectl_manifest" "mongo-deployment" {
     yaml_body = <<YAML
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo-deployment
-  namespace: a2024
+  # namespace: a2024
   labels:
     app: mongodb
 spec:
