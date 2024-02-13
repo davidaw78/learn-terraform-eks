@@ -32,7 +32,7 @@ resource "aws_subnet" "terraform-eks-demo-subnet" {
 }
 
 resource "aws_internet_gateway" "terraform-eks-demo-igw" {
-  vpc_id = "${aws_vpc.demo.id}"
+  vpc_id = "${aws_vpc.terraform-eks-demo.id}"
 
   tags = {
     Name = "terraform-eks-demo-igw"
