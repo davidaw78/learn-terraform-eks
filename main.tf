@@ -34,6 +34,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "null_resource" "ingress-nginx" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml"
+  }
+}
+
 resource "kubectl_manifest" "a2024-namespace" {
     yaml_body = <<YAML
 apiVersion: v1
