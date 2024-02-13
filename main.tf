@@ -4,6 +4,9 @@ variable "cluster-name" {
 
 # Will explore what does shared mean.
 # Setup VPC layer
+
+data "aws_availability_zones" "available" {}
+
 resource "aws_vpc" "terraform-eks-demo-vpc" {
   cidr_block = "10.0.0.0/16" # 65,534 ip addresses
 # What is tomap?
