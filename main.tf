@@ -19,7 +19,7 @@ resource "aws_vpc" "terraform-eks-main" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "main"
+    Name = "terraform-eks-main"
   }
 }
 
