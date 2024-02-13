@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   required_providers {
-    config_path = "~/.kube/config"
+    config_path = "/home/cloudshell-user/.kube/config"
     aws = {
       source  = "hashicorp/aws"
       version = "~> 3.0"
