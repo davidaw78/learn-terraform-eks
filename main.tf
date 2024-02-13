@@ -24,7 +24,7 @@ resource "aws_vpc" "terraform-eks-main" {
 }
 
 resource "aws_internet_gateway" "terraform-eks-igw" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.terraform-eks-main.id
 
   tags = {
     Name = "terraform-eks-igw"
