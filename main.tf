@@ -9,15 +9,15 @@ terraform {
       version = "~> 3.0"
     }
     kubernetes = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
       config_path = "~/.kube/config"
     }
   }
 }
 
 resource "kubernetes_manifest" "mongo-deployment" {
-    yaml_body = <<YAML
+    manifest = yamldecode(<<-EOF
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -62,7 +62,8 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
-YAML
+EOF
+)
 }
 
 data "template_file" "run-app" {
