@@ -236,7 +236,7 @@ resource "aws_iam_role_policy_attachment" "terraform-eks-cluster-AmazonEKSServic
 # Setup cluster
 resource "aws_eks_cluster" "terraform-eks-cluster" {
   name            = var.cluster-name
-  role_arn        = "${aws_iam_role.terraform-eks-role-cluster.arn}"
+  role_arn        = aws_iam_role.terraform-eks-role-cluster.arn
 
   vpc_config {
     security_group_ids = [
