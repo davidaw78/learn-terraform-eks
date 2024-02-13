@@ -30,6 +30,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "null_resource" "mongo-developement" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ${path.module}/mongo-deployment.yaml"
+  }
+}
+
 output "endpoint" {
   value = aws_eks_cluster.demo.endpoint
 }
