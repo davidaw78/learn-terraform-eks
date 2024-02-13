@@ -372,6 +372,14 @@ output "test_policy_arn" {
   value = aws_iam_role.test_oidc.arn
 }
 
+data "aws_eks_cluster" "example" {
+  name = "demo"
+}
+
+output "endpoint" {
+  value = data.aws_eks_cluster.example.endpoint
+}
+
 # Run kubectl to deploy yaml files
 resource "null_resource" "kubectl" {
   provisioner "local-exec" {
