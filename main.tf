@@ -19,10 +19,19 @@ terraform {
   }
 }
 
+locals {
+  cluster_name = "demo"
+}
+
+variable "region" {
+  type    = string
+  default = "us-east-1"
+}
+
 resource "null_resource" "kubectl" {
-    provisioner "local-exec" {
-        command = "aws eks --region us-east-1 update-kubeconfig --name demo"
-    }
+  provisioner "local-exec" {
+        command = "aws eks --region ${var.region} update-kubeconfig --name ${local.cluster_name}"
+  }
 }
 
 resource "kubectl_manifest" "mongo-deployment" {
