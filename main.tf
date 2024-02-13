@@ -28,44 +28,6 @@ variable "region" {
   default = "us-east-1"
 }
 
-# Run kubectl to deploy yaml files
-resource "null_resource" "kubectl" {
-  provisioner "local-exec" {
-        command = "aws eks update-kubeconfig --region ${var.region}  --name ${local.cluster_name}"
-  }
-}
-
-resource "null_resource" "a2024-namespace" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml"
-  }
-}
-
-resource "null_resource" "ingress-nginx" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml"
-  }
-}
-
-resource "null_resource" "a2024-deployment" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml"
-  }
-}
-
-resource "null_resource" "mongo-deployment" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml"
-  }
-}
-
-resource "null_resource" "a2024-ingress" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f ./a2024-ingress.yaml"
-  }
-}
-
-
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
@@ -408,4 +370,41 @@ resource "aws_iam_role_policy_attachment" "test_attach" {
 
 output "test_policy_arn" {
   value = aws_iam_role.test_oidc.arn
+}
+
+# Run kubectl to deploy yaml files
+resource "null_resource" "kubectl" {
+  provisioner "local-exec" {
+        command = "aws eks update-kubeconfig --region ${var.region}  --name ${local.cluster_name}"
+  }
+}
+
+resource "null_resource" "a2024-namespace" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml"
+  }
+}
+
+resource "null_resource" "ingress-nginx" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml"
+  }
+}
+
+resource "null_resource" "a2024-deployment" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml"
+  }
+}
+
+resource "null_resource" "mongo-deployment" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml"
+  }
+}
+
+resource "null_resource" "a2024-ingress" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml"
+  }
 }
