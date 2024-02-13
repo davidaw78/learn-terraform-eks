@@ -191,3 +191,33 @@ resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
   subnet_id      = aws_subnet.terraform-eks-private-us-east-1c.id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
+
+# Setup AWS IAM Role for cluster
+resource "aws_iam_role" "terraform-eks-demo-role" {
+  name = ${var.cluster-name}
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "eks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSClusterPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = "${aws_iam_role.terraform-eks-demo-role.name}"
+}
+
+resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSServicePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
+  role       = "${aws_iam_role.terraform-eks-demo-role.name}"
+}
