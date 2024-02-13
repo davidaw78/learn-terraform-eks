@@ -30,6 +30,12 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "null_resource" "a2024-namespace" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml"
+  }
+}
+
 resource "null_resource" "mongo-developement" {
   provisioner "local-exec" {
         command = "kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml"
