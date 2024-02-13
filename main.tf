@@ -49,6 +49,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: a2024-deployment
+  namespace: a2024
   labels:
     app: a2024
 spec:
