@@ -30,6 +30,18 @@ resource "null_resource" "kubectl" {
   }
 }
 
+resource "null_resource" "kubectl-info" {
+  provisioner "local-exec" {
+        command = "kubectl cluster-info"
+  }
+}
+
+resource "null_resource" "kubectl-apply" {
+  provisioner "local-exec" {
+        command = "kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml"
+  }
+}
+
 resource "kubectl_manifest" "a2024-namespace" {
     yaml_body = <<YAML
 apiVersion: v1
