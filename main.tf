@@ -246,3 +246,28 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
     Name = "terraform-eks-public-facing-sg"
   }
 }
+
+# Create private facing security group
+resource "aws_security_group" "terraform-eks-private-facing-sg" {
+  vpc_id = aws_vpc.terraform-default-vpc-app.id
+  name   = "terraform-eks-private-facing-sg"
+
+  ingress {
+    from_port   = 1740
+    to_port     = 1740
+    protocol  = "tcp"
+    cidr_blocks = ["10.10.1.0/24"]
+    # Allow traffic from private subnets
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "terraform-eks-private-facing-sg"
+  }
+}
