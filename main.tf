@@ -30,6 +30,19 @@ resource "null_resource" "kubectl" {
   }
 }
 
+output "endpoint" {
+  value = data.aws_eks_cluster.demo.endpoint
+}
+
+output "kubeconfig-certificate-authority-data" {
+  value = data.aws_eks_cluster.demo.certificate_authority[0].data
+}
+
+# Only available on Kubernetes version 1.13 and 1.14 clusters created or upgraded on or after September 3, 2019.
+output "identity-oidc-issuer" {
+  value = data.aws_eks_cluster.demo.identity[0].oidc[0].issuer
+}
+
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
@@ -271,9 +284,9 @@ resource "aws_eks_node_group" "private-nodes" {
   instance_types = ["t3.small"]
 
   scaling_config {
-    desired_size = 2
-    max_size     = 5
-    min_size     = 0
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
   }
 
   update_config {
