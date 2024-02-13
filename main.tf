@@ -193,7 +193,7 @@ resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
 }
 
 # Setup AWS IAM Role for cluster
-resource "aws_iam_role" "terraform-eks-demo-role" {
+resource "aws_iam_role" "terraform-eks-role-cluster" {
   name = "${var.cluster-name}"
 
   assume_role_policy = <<POLICY
@@ -212,20 +212,20 @@ resource "aws_iam_role" "terraform-eks-demo-role" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "terraform-eks-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "${aws_iam_role.terraform-eks-demo-role.name}"
+  role       = "${aws_iam_role.terraform-eks-role-cluster.name}"
 }
 
-resource "aws_iam_role_policy_attachment" "terraform-eks-demo-cluster-AmazonEKSServicePolicy" {
+resource "aws_iam_role_policy_attachment" "terraform-eks-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "${aws_iam_role.terraform-eks-demo-role.name}"
+  role       = "${aws_iam_role.terraform-eks-role-cluster.name}"
 }
 
 # Setup cluster
-resource "aws_eks_cluster" "terraform-eks-demo-cluster" {
+resource "aws_eks_cluster" "terraform-eks-cluster" {
   name            = var.cluster-name
-  role_arn        = "${aws_iam_role.terraform-eks-demo-role.arn}"
+  role_arn        = "${aws_iam_role.terraform-eks-role-cluster.arn}"
 
   vpc_config {
     security_group_ids = [
@@ -238,8 +238,8 @@ resource "aws_eks_cluster" "terraform-eks-demo-cluster" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSServicePolicy
+    aws_iam_role_policy_attachment.terraform-eks-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.terraform-eks-cluster-AmazonEKSServicePolicy
   ]
 }
 
