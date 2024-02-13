@@ -168,11 +168,11 @@ resource "aws_route_table_association" "public-us-east-2a-rta" {
 }
 
 resource "aws_route_table_association" "terraform-eks-private-us-east-1b-rta" {
-  subnet_id      = aws_subnet.private-us-east-1b.id
+  subnet_id      = aws_subnet.terraform-eks-private-us-east-1b.id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
 
 resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
-  subnet_id      = aws_subnet.private-us-east-1c.id
+  subnet_id      = aws_subnet.terraform-eks-private-us-east-1c.id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
