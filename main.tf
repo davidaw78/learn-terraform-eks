@@ -32,12 +32,8 @@ resource "null_resource" "kubectl" {
 
 resource "null_resource" "mongo-developement" {
   provisioner "local-exec" {
-        command = "kubectl apply -f ${path.module}/mongo-deployment.yaml"
+        command = "kubectl apply -f ${path.module}/../mongo-deployment.yaml"
   }
-}
-
-output "module_path" {
-  value = path.module()
 }
 
 output "endpoint" {
