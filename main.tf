@@ -36,6 +36,10 @@ resource "null_resource" "mongo-developement" {
   }
 }
 
+output "module_path" {
+  value = path.module()
+}
+
 output "endpoint" {
   value = aws_eks_cluster.demo.endpoint
 }
