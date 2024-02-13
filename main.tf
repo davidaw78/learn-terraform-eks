@@ -69,7 +69,7 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "a2024-ingress"{
+resource "kubectl_manifest" "a2024-service"{
     yaml_body = <<YAML
 apiVersion: v1
 kind: Service
