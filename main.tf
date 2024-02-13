@@ -253,10 +253,10 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
   name   = "terraform-eks-private-facing-sg"
 
   ingress {
-    from_port   = 1740
-    to_port     = 1740
-    protocol  = "tcp"
-    cidr_blocks = ["10.10.1.0/24"]
+    from_port   = 0
+    to_port     = 0
+    protocol  = "-1"
+    cidr_blocks = ["10.0.3.0/24"]
     # Allow traffic from private subnets
   }
 
