@@ -12,7 +12,7 @@ resource "aws_vpc" "terraform-eks-demo-vpc" {
 # What is tomap?
   tags = {
     Name = "terraform-eks-demo-node-vpc",
-    "kubernetes.io/cluster/${var.cluster-name}" = "shared",
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "terraform-eks-demo-subnet" {
 
   tags = {
     Name = "terraform-eks-demo-node-subnet",
-    "kubernetes.io/cluster/${var.cluster-name}", "shared",
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
   }
 }
 
