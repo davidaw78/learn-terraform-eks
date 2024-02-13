@@ -30,24 +30,44 @@ resource "null_resource" "kubectl" {
   }
 }
 
-resource "null_resource" "kubectl-info" {
-  provisioner "local-exec" {
-        command = "kubectl cluster-info"
-  }
-}
-
-resource "null_resource" "kubectl-apply" {
-  provisioner "local-exec" {
-        command = "kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml"
-  }
-}
-
-resource "kubectl_manifest" "a2024-namespace" {
+resource "kubectl_manifest" "mongo-development" {
     yaml_body = <<YAML
-apiVersion: v1
-kind: Namespace
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-  name: a2024
+  name: mongo-deployment
+#  namespace: a2024
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - image: 'mongo:latest'
+          name: elixir-mongo
+          ports:
+            - containerPort: 27017
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+#  namespace: a2024
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
 YAML
 }
 
