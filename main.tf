@@ -25,6 +25,7 @@ resource "null_resource" "kubectl" {
 resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
         command = <<EOT
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
         kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
