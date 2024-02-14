@@ -501,6 +501,9 @@ USERDATA
 }
 
 resource "aws_launch_template" "terraform-eks-demo" {
+  name_prefix            = "terraform-template-app-"
+  image_id               = "ami-023c9d904d7c3bf72"
+  instance_type          = "t3.small"
   name = "eks-with-disks"
   user_data = "${base64encode(local.demo-node-userdata)}"
 
