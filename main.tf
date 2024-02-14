@@ -24,10 +24,10 @@ resource "null_resource" "kubectl" {
 
 resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
-        command = [
-        "kubectl apply -f ${path.module}/learn-terraform-eks/a2024-namespace.yaml",
-        "kubectl apply -f ${path.module}/learn-terraform-eks/a2024-deployment.yaml"
-        ]
+        command = <<EOT
+        kubectl apply -f ${path.module}/learn-terraform-eks/a2024-namespace.yaml
+        kubectl apply -f ${path.module}/learn-terraform-eks/a2024-deployment.yaml
+        EOT
   }
   depends_on = [resource.null_resource.kubectl]
 }
