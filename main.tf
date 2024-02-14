@@ -17,7 +17,7 @@ terraform {
 
 resource "null_resource" "kubectl" {
   provisioner "local-exec" {
-        command = "aws eks update-kubeconfig --region var.region  --name var.cluster-name"
+        command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
 }
 
@@ -25,7 +25,7 @@ variable "cluster-name" {
   default = "terraform-eks-demo"
 }
 
-output "${var.cluster-name}-output" {
+output "var.cluster-name-output" {
   value = "${var.cluster-name}-value"
 }
 
