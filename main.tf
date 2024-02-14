@@ -25,7 +25,7 @@ variable "cluster-name" {
   default = "terraform-eks-demo"
 }
 
-output "var.cluster-name-output" {
+output "cluster-name-output" {
   value = "${var.cluster-name}-value"
 }
 
