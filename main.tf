@@ -19,7 +19,8 @@ resource "null_resource" "kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
-  depends_on = [output.kubeconfig]
+  depends_on = [resource.aws_eks_node_group.private-nodes]
+#  depends_on = [output.kubeconfig]
 }
 
 variable "cluster-name" {
