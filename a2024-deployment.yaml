@@ -41,5 +41,5 @@ spec:
     app: a2024
   ports:
     - protocol: TCP
-      port: 1741
+      port: 1740
       targetPort: 1740
