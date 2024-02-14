@@ -383,6 +383,11 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
   role       = aws_iam_role.terraform-eks-nodes-role.name
 }
 
+resource "aws_iam_role_policy_attachment" "nodes-AmazonSSMManagedInstanceCore" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.terraform-eks-nodes-role.name
+}
+
 resource "aws_eks_node_group" "private-nodes" {
   cluster_name    = aws_eks_cluster.terraform-eks-cluster.name
   node_group_name = "private-nodes"
@@ -479,9 +484,6 @@ USERDATA
 resource "aws_launch_template" "eks-with-disks" {
   name = "eks-with-disks"
   user_data = "${base64encode(local.demo-node-userdata)}"
-  iam_instance_profile {
-    name = "EC2testrole"
-  }
 
   block_device_mappings {
     device_name = "/dev/xvdb"
