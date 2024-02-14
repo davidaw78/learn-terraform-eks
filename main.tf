@@ -25,6 +25,10 @@ variable "cluster-name" {
   default = "terraform-eks-demo"
 }
 
+output "${var.cluster-name}-output" {
+  value = "${var.cluster-name}-value"
+}
+
 variable "region" {
   type    = string
   default = "us-east-1"
@@ -494,4 +498,6 @@ resource "aws_launch_template" "eks-with-disks" {
     }
   }
 }
+
+
 
