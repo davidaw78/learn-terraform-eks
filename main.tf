@@ -34,7 +34,6 @@ resource "null_resource" "run-kubectl2" {
   depends_on = [resource.null_resource.kubectl]
 }
 
-
 variable "cluster-name" {
   default = "terraform-eks-demo"
 }
@@ -95,7 +94,7 @@ resource "aws_subnet" "terraform-eks-public-us-east-1a" {
   tags = {
     "Name"                       = "terraform-eks-public-us-east-1a"
     "kubernetes.io/role/elb"     = "1"
-    "kubernetes.io/cluster/demo" = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -108,7 +107,7 @@ resource "aws_subnet" "terraform-eks-public-us-east-2a" {
   tags = {
     "Name"                       = "terraform-eks-public-us-east-2a"
     "kubernetes.io/role/elb"     = "1"
-    "kubernetes.io/cluster/terraform-eks-demo" = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -120,7 +119,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   tags = {
     "Name"                            = "terraform-eks-private-us-east-1b"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/terraform-eks-demo"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
@@ -132,7 +131,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-2b" {
   tags = {
     "Name"                            = "terraform-eks-private-us-east-2b"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/terraform-eks-demo"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
@@ -144,7 +143,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-1c" {
   tags = {
     "Name"                            = "terraform-eks-private-us-east-1c"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/terraform-eks-demo"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
