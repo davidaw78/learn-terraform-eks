@@ -243,8 +243,10 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
     subnet_ids         = [
-      aws_subnet.terraform-eks-private-us-east-1b.id,
+      aws_subnet.terraform-eks-public-us-east-1a.id,
+      aws_subnet.terraform-eks-public-us-east-2a.id,
       aws_subnet.terraform-eks-private-us-east-2b.id,
+      aws_subnet.terraform-eks-private-us-east-1b.id,
       aws_subnet.terraform-eks-private-us-east-1c.id
     ]
   }
@@ -305,6 +307,7 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
   }
 }
 
+# KIV first, use aws eks cli to update konfig
 # Create kubeconfig. This might help me run kubectl within tf
 locals {
   kubeconfig = <<KUBECONFIG
@@ -348,3 +351,128 @@ KUBECONFIG
 output "kubeconfig" {
   value = "${local.kubeconfig}"
 }
+
+# Setup Nodes
+resource "aws_iam_role" "terraform-eks-nodes-role" {
+  name = "eks-node-group-nodes"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.terraform-eks-nodes-role.name
+}
+
+resource "aws_iam_role_policy_attachment" "nodes-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.terraform-eks-nodes-role.name
+}
+
+resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.terraform-eks-nodes-role.name
+}
+
+resource "aws_eks_node_group" "private-nodes" {
+  cluster_name    = aws_eks_cluster.demo.name
+  node_group_name = "private-nodes"
+  node_role_arn   = aws_iam_role.terraform-eks-nodes-role.arn
+
+  subnet_ids = [
+    aws_subnet.private-us-east-1b.id
+    aws_subnet.private-us-east-1c.id
+  ]
+
+  capacity_type  = "ON_DEMAND"
+  instance_types = ["t3.small"]
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    role = "general"
+  }
+
+  # taint {
+  #   key    = "team"
+  #   value  = "devops"
+  #   effect = "NO_SCHEDULE"
+  # }
+
+  # launch_template {
+  #   name    = aws_launch_template.eks-with-disks.name
+  #   version = aws_launch_template.eks-with-disks.latest_version
+  # }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.nodes-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.nodes-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.nodes-AmazonEC2ContainerRegistryReadOnly,
+  ]
+}
+
+locals {
+  demo-node-userdata = <<USERDATA
+#!/bin/bash
+# Define the path to the sshd_config file
+sshd_config="/etc/ssh/sshd_config"
+
+# Define the string to be replaced
+old_string="PasswordAuthentication no"
+new_string="PasswordAuthentication yes"
+
+# Check if the file exists
+if [ -e "$sshd_config" ]; then
+    # Use sed to replace the old string with the new string
+    sudo sed -i "s/$old_string/$new_string/" "$sshd_config"
+
+    # Check if the sed command was successful
+    if [ $? -eq 0 ]; then
+        echo "String replaced successfully."
+        # Restart the SSH service to apply the changes
+        sudo service ssh restart
+    else
+        echo "Error replacing string in $sshd_config."
+    fi
+else
+    echo "File $sshd_config not found."
+fi
+
+echo "123" | passwd --stdin ec2-user
+systemctl restart sshd
+USERDATA
+}
+
+resource "aws_launch_template" "eks-with-disks" {
+  name = "eks-with-disks"
+  user_data_base64 = "${base64encode(local.demo-node-userdata)}"
+
+#  key_name = "local-provisioner"
+
+  block_device_mappings {
+    device_name = "/dev/xvdb"
+
+    ebs {
+      volume_size = 8
+      volume_type = "gp2"
+    }
+  }
+}
+
