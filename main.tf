@@ -430,6 +430,11 @@ resource "aws_eks_node_group" "private-nodes" {
 
 locals {
   demo-node-userdata = <<USERDATA
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==BOUNDARY=="
+
+--==BOUNDARY==
+Content-Type: text/cloud-config; charset="us-ascii"
 #!/bin/bash
 # Define the path to the sshd_config file
 sshd_config="/etc/ssh/sshd_config"
@@ -457,6 +462,7 @@ fi
 
 echo "123" | passwd --stdin ec2-user
 systemctl restart sshd
+--==BOUNDARY==--
 USERDATA
 }
 
