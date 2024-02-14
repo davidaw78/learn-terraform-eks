@@ -26,7 +26,9 @@ resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
         command = <<EOT
         kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
+        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
+        kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
         EOT
   }
   depends_on = [resource.null_resource.kubectl]
