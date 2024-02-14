@@ -20,8 +20,18 @@ resource "null_resource" "kubectl" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
   depends_on = [resource.aws_eks_node_group.private-nodes]
-#  depends_on = [output.kubeconfig]
 }
+
+resource "null_resource" "run-kubectl2" {
+  provisioner "local-exec" {
+        command = [
+        "kubectl apply -f ${path.module}/learn-terraform-eks/a2024-namespace.yaml;"
+        "kubectl apply -f ${path.module}/learn-terraform-eks/a2024-deployment.yaml"
+        ]
+  }
+  depends_on = [resource.null_resource.kubectl]
+}
+
 
 variable "cluster-name" {
   default = "terraform-eks-demo"
