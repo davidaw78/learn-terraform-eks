@@ -384,13 +384,13 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
 }
 
 resource "aws_eks_node_group" "private-nodes" {
-  cluster_name    = aws_eks_cluster.demo.name
+  cluster_name    = aws_eks_cluster.terraform-eks-demo.name
   node_group_name = "private-nodes"
   node_role_arn   = aws_iam_role.terraform-eks-nodes-role.arn
 
   subnet_ids = [
-    aws_subnet.private-us-east-1b.id,
-    aws_subnet.private-us-east-1c.id
+    aws_subnet.terraform-eks-private-us-east-1b.id,
+    aws_subnet.terraform-eks-private-us-east-1c.id
   ]
 
   capacity_type  = "ON_DEMAND"
