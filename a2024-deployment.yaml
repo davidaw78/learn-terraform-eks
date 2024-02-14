@@ -36,6 +36,7 @@ metadata:
   name: a2024-service
   namespace: a2024
 spec:
+  type: LoadBalancer
   selector:
     app: a2024
   ports:
