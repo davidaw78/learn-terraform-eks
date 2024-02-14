@@ -36,10 +36,9 @@ metadata:
   name: a2024-service
   namespace: a2024
 spec:
-  type: LoadBalancer
   selector:
     app: a2024
   ports:
     - protocol: TCP
-      port: 1740
+      port: 1741
       targetPort: 1740
