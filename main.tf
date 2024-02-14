@@ -462,7 +462,7 @@ USERDATA
 
 resource "aws_launch_template" "eks-with-disks" {
   name = "eks-with-disks"
-  user_data_base64 = "${base64encode(local.demo-node-userdata)}"
+  user_data = "${base64encode(local.demo-node-userdata)}"
 
 #  key_name = "local-provisioner"
 
