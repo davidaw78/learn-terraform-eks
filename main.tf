@@ -30,14 +30,6 @@ resource "null_resource" "kubectl" {
   }
 }
 
-resource "null_resource" "run-kubectl" {
-  provisioner "local-exec" {
-        command = <<-EOT
-      ./run-kubectl.sh
-    EOT
-  }
-}
-
 output "endpoint" {
   value = aws_eks_cluster.demo.endpoint
 }
