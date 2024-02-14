@@ -225,7 +225,7 @@ resource "aws_iam_role_policy_attachment" "demo-AmazonEKSClusterPolicy" {
 }
 
 resource "aws_eks_cluster" "demo" {
-  name     = "demo1"
+  name     = "demo"
   role_arn = aws_iam_role.demo.arn
 
   vpc_config {
@@ -276,14 +276,12 @@ resource "aws_eks_node_group" "private-nodes" {
   node_role_arn   = aws_iam_role.nodes.arn
 
   subnet_ids = [
-    aws_subnet.public-us-east-1a.id,
-    aws_subnet.public-us-east-1b.id
-#    aws_subnet.private-us-east-1a.id,
-#    aws_subnet.private-us-east-1b.id
+    aws_subnet.private-us-east-1a.id,
+    aws_subnet.private-us-east-1b.id
   ]
 
   capacity_type  = "ON_DEMAND"
-  instance_types = ["t3.small"]
+  instance_types = ["t3.medium"]
 
   scaling_config {
     desired_size = 1
