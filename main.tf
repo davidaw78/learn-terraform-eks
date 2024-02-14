@@ -462,6 +462,16 @@ fi
 
 echo "123" | passwd --stdin ec2-user
 systemctl restart sshd
+
+#Install ssm agent
+if [[ $(uname -i) == "aarch64" ]]; then
+  echo "arm"
+  yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_arm64/amazon-ssm-agent.rpm
+else
+  echo "amd"
+  yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+fi
+systemctl start amazon-ssm-agent
 --==BOUNDARY==--
 USERDATA
 }
@@ -469,8 +479,9 @@ USERDATA
 resource "aws_launch_template" "eks-with-disks" {
   name = "eks-with-disks"
   user_data = "${base64encode(local.demo-node-userdata)}"
-
-#  key_name = "local-provisioner"
+  iam_instance_profile {
+    name = "EC2testrole"
+  }
 
   block_device_mappings {
     device_name = "/dev/xvdb"
