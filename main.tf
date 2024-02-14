@@ -398,6 +398,7 @@ resource "aws_eks_node_group" "private-nodes" {
   node_role_arn   = aws_iam_role.terraform-eks-nodes-role.arn
 
   subnet_ids = [
+    aws_subnet.terraform-eks-public-us-east-1a.id,
     aws_subnet.terraform-eks-private-us-east-1b.id,
     aws_subnet.terraform-eks-private-us-east-1c.id
   ]
