@@ -441,8 +441,8 @@ resource "aws_eks_node_group" "private-nodes" {
   # }
 
   launch_template {
-    name    = aws_launch_template.eks-with-disks.name
-    version = aws_launch_template.eks-with-disks.latest_version
+    name    = aws_launch_template.terraform-eks-demo.name
+    version = aws_launch_template.terraform-eks-demo.latest_version
   }
 
   depends_on = [
@@ -500,7 +500,7 @@ systemctl start amazon-ssm-agent
 USERDATA
 }
 
-resource "aws_launch_template" "eks-with-disks" {
+resource "aws_launch_template" "terraform-eks-demo" {
   name = "eks-with-disks"
   user_data = "${base64encode(local.demo-node-userdata)}"
 
@@ -511,6 +511,28 @@ resource "aws_launch_template" "eks-with-disks" {
       volume_size = 8
       volume_type = "gp2"
     }
+  }
+}
+
+# Autoscaling
+resource "aws_autoscaling_group" "terraform-eks-demo" {
+  desired_capacity     = 1
+  launch_template = "${aws_launch_template.terraform-eks-demo.id}"
+  max_size             = 1
+  min_size             = 1
+  name                 = "terraform-eks-demo"
+  vpc_zone_identifier  = ["${aws_subnet.terraform-eks*.id}"]
+
+  tag {
+    key                 = "Name"
+    value               = "terraform-eks-demo"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "kubernetes.io/cluster/${var.cluster-name}"
+    value               = "owned"
+    propagate_at_launch = true
   }
 }
 
