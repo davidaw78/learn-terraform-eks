@@ -516,6 +516,9 @@ resource "aws_launch_template" "terraform-eks-demo" {
 
 # Autoscaling
 resource "aws_autoscaling_group" "terraform-eks-demo" {
+  name_prefix   = "terraform-eks-demo-"
+  image_id      = "ami-12345678"
+  instance_type = "t3.micro"
   desired_capacity     = 1
   max_size             = 1
   min_size             = 1
@@ -527,7 +530,6 @@ resource "aws_autoscaling_group" "terraform-eks-demo" {
   launch_template {
     id      = aws_launch_template.terraform-eks-demo.id 
     version = "$Latest"
-    instance_type = "t3-micro"
   }
   tag {
     key                 = "Name"
