@@ -4,7 +4,8 @@ metadata:
   name: a2024-ingress
   namespace: a2024
   annotations:
-     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
 #    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 #    nginx.ingress.kubernetes.io/rewrite-target: /   
 spec:
