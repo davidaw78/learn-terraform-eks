@@ -527,9 +527,8 @@ resource "aws_autoscaling_group" "terraform-eks-demo" {
   launch_template {
     id      = aws_launch_template.terraform-eks-demo.id 
     version = "$Latest"
+    instance_type = "t3-micro"
   }
-
-
   tag {
     key                 = "Name"
     value               = "terraform-eks-demo"
