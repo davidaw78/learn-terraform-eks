@@ -502,7 +502,7 @@ USERDATA
 
 resource "aws_launch_template" "terraform-eks-demo" {
   name_prefix            = "terraform-eks-template-"
-  image_id               = "ami-023c9d904d7c3bf72"
+  image_id               = "ami-0cf10cdf9fcd62d37"
   instance_type          = "t3.small"
   user_data = "${base64encode(local.demo-node-userdata)}"
 
