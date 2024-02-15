@@ -418,7 +418,7 @@ resource "aws_eks_node_group" "private-nodes" {
   ]
 
   capacity_type  = "ON_DEMAND"
-#  instance_types = ["t3.small"]
+  instance_types = ["t3.small"]
 
   scaling_config {
     desired_size = 1
@@ -501,9 +501,7 @@ USERDATA
 }
 
 resource "aws_launch_template" "terraform-eks-demo" {
-  name_prefix            = "terraform-eks-template-"
-  image_id               = "ami-0cf10cdf9fcd62d37"
-  instance_type          = "t3.small"
+  name = "eks-with-disks"
   user_data = "${base64encode(local.demo-node-userdata)}"
 
   block_device_mappings {
@@ -519,29 +517,17 @@ resource "aws_launch_template" "terraform-eks-demo" {
 # Autoscaling
 resource "aws_autoscaling_group" "terraform-eks-demo" {
   desired_capacity     = 1
+  launch_template = "${aws_launch_template.terraform-eks-demo.id}"
   max_size             = 1
   min_size             = 1
   name                 = "terraform-eks-demo"
-  vpc_zone_identifier  = [
-    aws_subnet.terraform-eks-private-us-east-1b.id,
-    aws_subnet.terraform-eks-private-us-east-1c.id
-  ]
-  launch_template {
-    id      = aws_launch_template.terraform-eks-demo.id 
-    version = "$Latest"
-  }
-  tag {
-    key                 = "Name"
-    value               = "terraform-eks-demo"
-    propagate_at_launch = true
-  }
+  vpc_zone_identifier  = ["${aws_subnet.terraform-eks*.id}"]
 
   tag {
-    key                 = "kubernetes.io/cluster/${var.cluster-name}"
-    value               = "owned"
-    propagate_at_launch = true
-  }
+    "Name"                       = var.cluster-name
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+     propagate_at_launch = true
+  }  
 }
-
 
 
