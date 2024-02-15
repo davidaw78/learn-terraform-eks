@@ -107,7 +107,7 @@ resource "aws_subnet" "terraform-eks-public-us-east-1a" {
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                       = "terraform-eks-public-us-east-1a"
+    "Name"                       = "${var.cluster-name}public-us-east-1a"
     "kubernetes.io/role/elb"     = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
@@ -134,7 +134,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   tags = {
     "Name"                            = "${var.cluster-name}-private-us-east-1b"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -146,7 +146,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-2b" {
   tags = {
     "Name"                            = "${var.cluster-name}-private-us-east-2b"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -158,7 +158,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-1c" {
   tags = {
     "Name"                            = "${var.cluster-name}-private-us-east-1c"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -286,6 +286,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
   tags = {
     "Name" = "${var.cluster-name}-eks-cluster"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+    Who = "Me"
   }
 
   depends_on = [
@@ -322,7 +323,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 # Create private facing security group
 resource "aws_security_group" "terraform-eks-private-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
-  name   = "${var.cluster-name}s-private-facing-sg"
+  name   = "${var.cluster-name}-private-facing-sg"
 
   ingress {
     from_port   = 0
@@ -465,8 +466,9 @@ resource "aws_eks_node_group" "private-nodes" {
   }
 
   tags = {
-    "Name" = "${var.cluster-name}-eks-cluster-node"
+    Name = "${var.cluster-name}-eks-cluster-node"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+    Who = "Me"
   }
 
   depends_on = [
