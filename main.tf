@@ -275,7 +275,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
 # I'm going to remove this and only setup cluster in the private subnet.
 #      aws_subnet.terraform-eks-public-us-east-1a.id,
 #      aws_subnet.terraform-eks-public-us-east-2a.id,
-#      aws_subnet.terraform-eks-private-us-east-2b.id,
+      aws_subnet.terraform-eks-private-us-east-2b.id,
       aws_subnet.terraform-eks-private-us-east-1b.id,
       aws_subnet.terraform-eks-private-us-east-1c.id
     ]
