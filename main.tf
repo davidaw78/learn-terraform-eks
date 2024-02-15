@@ -30,6 +30,7 @@ resource "null_resource" "run-kubectl1" {
         sleep 60
         kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
+        sleep 60
         EOT
   }
   depends_on = [resource.null_resource.run-kubectl]
@@ -39,15 +40,8 @@ resource "null_resource" "run-kubectl1" {
 resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
         command = <<EOT
-        address=""
-        while [ -z "$address" ]; do
-          address=$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')
-          if [ -z "$address" ]; then
-            echo "Address not found. Retrying in 5 seconds..."
-            sleep 5
-          fi
-        done
-#        address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
+        address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
+        echo $address > address
         sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
         EOT
@@ -461,10 +455,6 @@ resource "aws_eks_node_group" "private-nodes" {
   launch_template {
     name    = aws_launch_template.terraform-eks-demo.name
     version = aws_launch_template.terraform-eks-demo.latest_version
-  }
-
-  tags = {
-    Name = "${var.cluster-name}-node"
   }
 
   depends_on = [
