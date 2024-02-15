@@ -73,7 +73,7 @@ resource "aws_internet_gateway" "terraform-eks-igw" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
 
   tags = {
-    Name = "terraform-eks-igw"
+    Name = "${var.cluster-name}-igw"
   }
 }
 
@@ -81,7 +81,7 @@ resource "aws_eip" "terraform-eks-eip" {
   vpc = true
 
   tags = {
-    Name = "terraform-eks-eip"
+    Name = "${var.cluster-name}-eip"
   }
 }
 
