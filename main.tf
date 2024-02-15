@@ -135,8 +135,6 @@ resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   }
 }
 
-# Comment out to save resource
-/*
 resource "aws_subnet" "terraform-eks-private-us-east-2b" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
   cidr_block        = "10.0.4.0/24"
@@ -148,7 +146,6 @@ resource "aws_subnet" "terraform-eks-private-us-east-2b" {
     "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
-*/
 
 resource "aws_subnet" "terraform-eks-private-us-east-1c" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
