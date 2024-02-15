@@ -67,7 +67,7 @@ resource "aws_vpc" "terraform-eks-vpc" {
 
   tags = {
     Name = "${var.cluster-name}-vpc"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
   }
 }
 
