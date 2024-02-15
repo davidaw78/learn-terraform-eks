@@ -47,11 +47,7 @@ resource "null_resource" "run-kubectl2" {
 }
 
 variable "cluster-name" {
-  default = "terraform-eks-demo"
-}
-
-output "cluster-name-output" {
-  value = "${var.cluster-name}-value"
+  default = "terraform-eks-demo1"
 }
 
 variable "region" {
