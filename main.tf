@@ -49,8 +49,9 @@ resource "null_resource" "run-kubectl2" {
 }
 
 variable "cluster-name" {
-  description = "This will ask you to name the cluster
-  default = "terraform-eks-demo1"
+  description = "This will ask you to name the cluster"
+# uncomment this to use default
+#  default = "terraform-eks-demo1"
 }
 
 variable "region" {
