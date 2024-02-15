@@ -64,7 +64,8 @@ resource "aws_vpc" "terraform-eks-vpc" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "terraform-eks-vpc"
+    Name = "${var.cluster-name}"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -73,7 +74,8 @@ resource "aws_internet_gateway" "terraform-eks-igw" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
 
   tags = {
-    Name = "terraform-eks-igw"
+    Name = "${var.cluster-name}"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -81,7 +83,8 @@ resource "aws_eip" "terraform-eks-eip" {
   vpc = true
 
   tags = {
-    Name = "terraform-eks-eip"
+    Name = "${var.cluster-name}"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -90,9 +93,9 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
   subnet_id     = aws_subnet.terraform-eks-public-us-east-1a.id
 
   tags = {
-    Name = "terraform-eks-nat"
+    Name = "${var.cluster-name}"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
-
   depends_on = [aws_internet_gateway.terraform-eks-igw]
 }
 
@@ -104,7 +107,7 @@ resource "aws_subnet" "terraform-eks-public-us-east-1a" {
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                       = "terraform-eks-public-us-east-1a"
+    "Name"                       = ${var.cluster-name}-public-us-east-1a"
     "kubernetes.io/role/elb"     = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
@@ -117,7 +120,7 @@ resource "aws_subnet" "terraform-eks-public-us-east-2a" {
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                       = "terraform-eks-public-us-east-2a"
+    "Name"                       = "${var.cluster-name}-public-us-east-2a"
     "kubernetes.io/role/elb"     = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
@@ -129,7 +132,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-1b" {
   availability_zone = "us-east-1a"
 
   tags = {
-    "Name"                            = "terraform-eks-private-us-east-1b"
+    "Name"                            = "${var.cluster-name}-private-us-east-1b"
     "kubernetes.io/role/internal-elb" = "1"
     "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
@@ -141,7 +144,7 @@ resource "aws_subnet" "terraform-eks-private-us-east-2b" {
   availability_zone = "us-east-1b"
 
   tags = {
-    "Name"                            = "terraform-eks-private-us-east-2b"
+    "Name"                            = "${var.cluster-name}-private-us-east-2b"
     "kubernetes.io/role/internal-elb" = "1"
     "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
@@ -153,9 +156,9 @@ resource "aws_subnet" "terraform-eks-private-us-east-1c" {
   availability_zone = "us-east-1a"
 
   tags = {
-    "Name"                            = "terraform-eks-private-us-east-1c"
+    "Name"                            = "${var.cluster-name}-private-us-east-1c"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -182,7 +185,8 @@ resource "aws_route_table" "terraform-eks-private-rt" {
   ]
 
   tags = {
-    Name = "terraform-eks-private-rt"
+    Name = "${var.cluster-name}-private-rt"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
@@ -208,7 +212,7 @@ resource "aws_route_table" "terraform-eks-public-rt" {
   ]
 
   tags = {
-    Name = "terraform-eks-public-rt"
+    Name = "${var.cluster-name}-public-rt"
   }
 }
 
@@ -290,7 +294,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
 # Create public facing security group
 resource "aws_security_group" "terraform-eks-public-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
-  name   = "terraform-eks-public-facing-sg"
+  name   = "${var.cluster-name}-public-facing-sg"
 
   ingress {
     from_port   = 443
@@ -316,15 +320,15 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
   }
 
   tags = {  
-    Name = "terraform-eks-public-facing-sg"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
+    Name = "${var.cluster-name}-public-facing-sg"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
 # Create private facing security group
 resource "aws_security_group" "terraform-eks-private-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
-  name   = "terraform-eks-private-facing-sg"
+  name   = "${var.cluster-name}-private-facing-sg"
 
 # Allow traffic only from public subnet 1a
 ingress {
@@ -352,7 +356,7 @@ ingress {
   }
 
   tags = {
-    Name = "terraform-eks-private-facing-sg"
+    Name = "${var.cluster-name}-private-facing-sg"
     "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
@@ -404,7 +408,7 @@ output "kubeconfig" {
 
 # Setup Nodes
 resource "aws_iam_role" "terraform-eks-nodes-role" {
-  name = "eks-node-group-nodes"
+  name = ${var.cluster-name}-node-group-nodes"
 
   assume_role_policy = jsonencode({
     Statement = [{
