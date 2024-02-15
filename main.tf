@@ -533,4 +533,8 @@ resource "aws_launch_template" "terraform-eks-demo" {
       volume_type = "gp2"
     }
   }
+  tags = {
+    "Name" = "${var.cluster-name}-eks-node-ec2"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+  }
 }
