@@ -15,7 +15,7 @@ terraform {
   }
 }
 
-resource "null_resource" "run-kubect0l" {
+resource "null_resource" "run-kubectl0" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
