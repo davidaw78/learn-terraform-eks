@@ -279,6 +279,11 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_subnet.terraform-eks-private-us-east-1c.id
     ]
   }
+  
+  tags = {
+    "Name" = "${var.cluster-name}-eks-cluster"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+  }
 
   depends_on = [
     aws_iam_role_policy_attachment.terraform-eks-cluster-AmazonEKSClusterPolicy,
@@ -457,7 +462,7 @@ resource "aws_eks_node_group" "private-nodes" {
   }
 
   tags = {
-    "Name" = "${var.cluster-name}-private-us-east-2b"
+    "Name" = "${var.cluster-name}-eks-cluster-node"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 
