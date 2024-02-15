@@ -513,21 +513,3 @@ resource "aws_launch_template" "terraform-eks-demo" {
     }
   }
 }
-
-# Autoscaling
-resource "aws_autoscaling_group" "terraform-eks-demo" {
-  desired_capacity     = 1
-  launch_template = "${aws_launch_template.terraform-eks-demo.id}"
-  max_size             = 1
-  min_size             = 1
-  name                 = "terraform-eks-demo"
-  vpc_zone_identifier  = ["${aws_subnet.terraform-eks*.id}"]
-
-  tag {
-    "Name"                       = var.cluster-name
-    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-     propagate_at_launch = true
-  }  
-}
-
-
