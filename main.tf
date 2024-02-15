@@ -15,35 +15,35 @@ terraform {
   }
 }
 
-resource "null_resource" "run-kubectl0" {
+resource "null_resource" "kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
   depends_on = [resource.aws_eks_node_group.private-nodes]
 }
 
-resource "null_resource" "run-kubectl1" {
-  provisioner "local-exec" {
-        command = <<EOT
-        kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
-        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
-        kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
-        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
-        EOT
-  }
-  depends_on = [resource.null_resource.run-kubectl0]
-}
-
 #change address
-resource "null_resource" "run-kubectl2" {
+resource "null_resource" "run-kubectl1" {
   provisioner "local-exec" {
         command = <<EOT
         address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
         sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
-        kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
         EOT
   }
-  depends_on = [resource.null_resource.run-kubectl1]
+  depends_on = [resource.null_resource.kubectl]
+}
+
+resource "null_resource" "run-kubectl2" {
+  provisioner "local-exec" {
+        command = <<EOT
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
+        kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
+        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
+        kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
+        kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
+        EOT
+  }
+  depends_on = [resource.null_resource.kubectl]
 }
 
 variable "cluster-name" {
@@ -64,7 +64,7 @@ resource "aws_vpc" "terraform-eks-vpc" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "${var.cluster-name}-vpc"
+    Name = "terraform-eks-vpc"
   }
 }
 
@@ -73,7 +73,7 @@ resource "aws_internet_gateway" "terraform-eks-igw" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
 
   tags = {
-    Name = "${var.cluster-name}-igw"
+    Name = "terraform-eks-igw"
   }
 }
 
@@ -81,7 +81,7 @@ resource "aws_eip" "terraform-eks-eip" {
   vpc = true
 
   tags = {
-    Name = "${var.cluster-name}-eip"
+    Name = "terraform-eks-eip"
   }
 }
 
@@ -90,7 +90,7 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
   subnet_id     = aws_subnet.terraform-eks-public-us-east-1a.id
 
   tags = {
-    Name = "${var.cluster-name}-nat"
+    Name = "terraform-eks-nat"
   }
 
   depends_on = [aws_internet_gateway.terraform-eks-igw]
@@ -182,7 +182,7 @@ resource "aws_route_table" "terraform-eks-private-rt" {
   ]
 
   tags = {
-    Name = "${var.cluster-name}-private-rt"
+    Name = "terraform-eks-private-rt"
   }
 }
 
@@ -208,7 +208,7 @@ resource "aws_route_table" "terraform-eks-public-rt" {
   ]
 
   tags = {
-    Name = "${var.cluster-name}-public-rt"
+    Name = "terraform-eks-public-rt"
   }
 }
 
@@ -272,9 +272,8 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
     subnet_ids         = [
-# I'm going to remove this and only setup cluster in the private subnet.
-#      aws_subnet.terraform-eks-public-us-east-1a.id,
-#      aws_subnet.terraform-eks-public-us-east-2a.id,
+      aws_subnet.terraform-eks-public-us-east-1a.id,
+      aws_subnet.terraform-eks-public-us-east-2a.id,
       aws_subnet.terraform-eks-private-us-east-2b.id,
       aws_subnet.terraform-eks-private-us-east-1b.id,
       aws_subnet.terraform-eks-private-us-east-1c.id
@@ -293,17 +292,9 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
   name   = "terraform-eks-public-facing-sg"
 
   ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    # Allow traffic from public subnet
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from public subnet
   }
@@ -317,7 +308,6 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 
   tags = {  
     Name = "terraform-eks-public-facing-sg"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
@@ -326,21 +316,12 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "terraform-eks-private-facing-sg"
 
-# Allow traffic only from public subnet 1a
-ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol  = "tcp"
-    cidr_blocks = ["10.0.1.0/24"]
-
-  }
-
-# Allow traffic only from public subnet 2a
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol  = "tcp"
-    cidr_blocks = ["10.0.2.0/24"]
+    from_port   = 0
+    to_port     = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+#    cidr_blocks = ["10.0.3.0/24"]
     # Allow traffic from private subnets
   }
 
@@ -353,7 +334,6 @@ ingress {
 
   tags = {
     Name = "terraform-eks-private-facing-sg"
-    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
