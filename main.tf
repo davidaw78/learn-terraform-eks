@@ -463,6 +463,10 @@ resource "aws_eks_node_group" "private-nodes" {
     version = aws_launch_template.terraform-eks-demo.latest_version
   }
 
+  tags = {
+    Name = "${var.cluster-name}-node"
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.nodes-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.nodes-AmazonEKS_CNI_Policy,
