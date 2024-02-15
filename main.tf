@@ -317,6 +317,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 
   tags = {  
     Name = "terraform-eks-public-facing-sg"
+    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
@@ -343,6 +344,7 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
 
   tags = {
     Name = "terraform-eks-private-facing-sg"
+    "kubernetes.io/cluster/${var.cluster-name}"      = "owned"
   }
 }
 
