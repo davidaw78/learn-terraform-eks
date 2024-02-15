@@ -541,4 +541,5 @@ resource "aws_launch_template" "terraform-eks-demo" {
     tags = {
       Name = "${var.cluster-name}-eks-node-ec2"
     }
+  }
 }
