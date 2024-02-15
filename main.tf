@@ -41,7 +41,6 @@ resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
         command = <<EOT
         address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
-        echo $address > address
         sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
         EOT
@@ -455,6 +454,11 @@ resource "aws_eks_node_group" "private-nodes" {
   launch_template {
     name    = aws_launch_template.terraform-eks-demo.name
     version = aws_launch_template.terraform-eks-demo.latest_version
+  }
+
+  tags = {
+    "Name" = "${var.cluster-name}-private-us-east-2b"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 
   depends_on = [
