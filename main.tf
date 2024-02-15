@@ -90,7 +90,7 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
   subnet_id     = aws_subnet.terraform-eks-public-us-east-1a.id
 
   tags = {
-    Name = "terraform-eks-nat"
+    Name = "${var.cluster-name}-nat"
   }
 
   depends_on = [aws_internet_gateway.terraform-eks-igw]
@@ -182,7 +182,7 @@ resource "aws_route_table" "terraform-eks-private-rt" {
   ]
 
   tags = {
-    Name = "terraform-eks-private-rt"
+    Name = "${var.cluster-name}-private-rt"
   }
 }
 
@@ -208,7 +208,7 @@ resource "aws_route_table" "terraform-eks-public-rt" {
   ]
 
   tags = {
-    Name = "terraform-eks-public-rt"
+    Name = "${var.cluster-name}-public-rt"
   }
 }
 
