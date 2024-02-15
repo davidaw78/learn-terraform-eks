@@ -15,7 +15,7 @@ terraform {
   }
 }
 
-resource "null_resource" "kubectl" {
+resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
   }
@@ -31,7 +31,7 @@ resource "null_resource" "run-kubectl1" {
         kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
         EOT
   }
-  depends_on = [resource.null_resource.kubectl]
+  depends_on = [resource.null_resource.run-kubectl]
 }
 
 #change address
@@ -43,7 +43,7 @@ resource "null_resource" "run-kubectl2" {
         kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
         EOT
   }
-  depends_on = [resource.null_resource.kubectl1]
+  depends_on = [resource.null_resource.run-kubectl1]
 }
 
 variable "cluster-name" {
