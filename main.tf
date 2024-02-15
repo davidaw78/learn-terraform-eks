@@ -30,7 +30,6 @@ resource "null_resource" "run-kubectl1" {
         sleep 60
         kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
         kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
-        sleep 60
         EOT
   }
   depends_on = [resource.null_resource.run-kubectl]
