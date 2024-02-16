@@ -230,6 +230,11 @@ resource "aws_route_table_association" "terraform-eks-private-us-east-1b-rta" {
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
 
+resource "aws_route_table_association" "terraform-eks-private-us-east-2b-rta" {
+  subnet_id      = aws_subnet.terraform-eks-private-us-east-2b.id
+  route_table_id = aws_route_table.terraform-eks-private-rt.id
+}
+
 resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
   subnet_id      = aws_subnet.terraform-eks-private-us-east-1c.id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
