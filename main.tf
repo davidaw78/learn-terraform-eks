@@ -300,6 +300,15 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "${var.cluster-name}-private-facing-sg"
 
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol  = "-1"
+    cidr_block = var.private-subnet-cidr-blocks[count.index]
+#    cidr_blocks = ["0.0.0.0/0"]
+    # Allow traffic from private subnets
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -311,18 +320,6 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     Name = "${var.cluster-name}-private-facing-sg"
   }
 }
-
-resource "aws_security_group_rule" "ec2" {
-  for_each = var.additional_ingress
-
-  type              = each.value.type
-  from_port         = each.value.from_port
-  to_port           = each.value.to_port
-  protocol          = each.value.protocol
-  cidr_blocks       = each.value.cidr_blocks
-  security_group_id = aws_security_group.terraform-eks-private-facing-sg.id
-}
-
 /*
 # KIV first, use aws eks cli to update konfig
 # Create kubeconfig. This might help me run kubectl within tf
