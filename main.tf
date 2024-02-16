@@ -258,7 +258,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
     subnet_ids         = [
-      for_each = aws_subnet.terraform-eks-public-subnet.id
+      for_each = aws_subnet.terraform-eks-public-subnet.id,
     ]
   }
   
