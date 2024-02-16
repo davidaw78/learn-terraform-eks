@@ -296,7 +296,6 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 
 # Create private facing security group
 resource "aws_security_group" "terraform-eks-private-facing-sg" {
-  count             = length(var.private-subnet-cidr-blocks)
   vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "${var.cluster-name}-private-facing-sg"
 
