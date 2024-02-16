@@ -115,7 +115,7 @@ resource "aws_eip" "terraform-eks-eip" {
 
 resource "aws_nat_gateway" "terraform-eks-nat" {
   allocation_id = aws_eip.terraform-eks-eip.id
-  subnet_id     = aws_subnet.terraform-eks-public_subnet[0].id
+  subnet_id     = aws_subnet.terraform-eks-public-subnet[0].id
 
   tags = {
     Name = "${var.cluster-name}-nat"
