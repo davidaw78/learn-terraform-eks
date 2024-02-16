@@ -132,7 +132,7 @@ resource "aws_subnet" "terraform-eks-public-subnet" {
   map_public_ip_on_launch = true
 
   tags = {
-    "Name" = "${var.cluster-name}public-subnet"
+    "Name" = "${var.cluster-name}-public-subnet"
     "kubernetes.io/role/elb"     = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
