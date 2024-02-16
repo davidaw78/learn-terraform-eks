@@ -257,10 +257,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
     security_group_ids = [
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
-    subnet_ids         = [
-      aws_subnet.terraform-eks-public-subnet.*.id,
-      aws_subnet.terraform-eks-private-subnet.*.id
-    ]
+    subnet_ids         = [aws_subnet.terraform-eks-public-subnet.*.id]
   }
   
   tags = {
