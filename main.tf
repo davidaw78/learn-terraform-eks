@@ -418,9 +418,7 @@ resource "aws_eks_node_group" "private-nodes" {
   node_group_name = "private-nodes"
   node_role_arn   = aws_iam_role.terraform-eks-nodes-role.arn
 
-  subnet_ids = [
-    aws_subnet.terraform-eks-private-subnet.id,
-  ]
+  subnet_ids      = var.private-subnet-ids
 
   capacity_type  = "ON_DEMAND"
   instance_types = ["t3.small"]
