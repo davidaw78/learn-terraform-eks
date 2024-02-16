@@ -329,8 +329,8 @@ locals {
 apiVersion: v1
 clusters:
 - cluster:
-#    server: ${aws_eks_cluster.terraform-eks-cluster.endpoint}
-#    certificate-authority-data: ${aws_eks_cluster.terraform-eks-cluster.certificate_authority.0.data}
+    server: ${aws_eks_cluster.terraform-eks-cluster.endpoint}
+    certificate-authority-data: ${aws_eks_cluster.terraform-eks-cluster.certificate_authority.0.data}
   name: kubernetes
 contexts:
 - context:
