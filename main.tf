@@ -206,7 +206,7 @@ resource "aws_route_table" "terraform-eks-public-rt" {
 }
 
 resource "aws_route_table_association" "terraform-eks-public-subnet-rta" {
-  subnet_id      = aws_subnet.terraform-eks-public-subnet.id
+  subnet_id      = aws_subnet.terraform-eks-public-subnet[count.index].id
   route_table_id = aws_route_table.terraform-eks-public-rt.id
 }
 
