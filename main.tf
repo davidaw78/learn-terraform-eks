@@ -318,7 +318,7 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     Name = "${var.cluster-name}-private-facing-sg"
   }
 }
-/*
+
 # KIV first, use aws eks cli to update konfig
 # Create kubeconfig. This might help me run kubectl within tf
 locals {
@@ -363,7 +363,7 @@ KUBECONFIG
 output "kubeconfig" {
   value = "${local.kubeconfig}"
 }
-*/
+
 
 # Setup Nodes
 resource "aws_iam_role" "terraform-eks-nodes-role" {
@@ -425,12 +425,6 @@ resource "aws_eks_node_group" "private-nodes" {
     role = "general"
   }
 
-  # taint {
-  #   key    = "team"
-  #   value  = "devops"
-  #   effect = "NO_SCHEDULE"
-  # }
-
   launch_template {
     name    = aws_launch_template.terraform-eks-demo.name
     version = aws_launch_template.terraform-eks-demo.latest_version
@@ -457,33 +451,6 @@ Content-Type: multipart/mixed; boundary="==BOUNDARY=="
 --==BOUNDARY==
 Content-Type: text/cloud-config; charset="us-ascii"
 #!/bin/bash
-# Define the path to the sshd_config file
-sshd_config="/etc/ssh/sshd_config"
-
-# Define the string to be replaced
-old_string="PasswordAuthentication no"
-new_string="PasswordAuthentication yes"
-
-# Check if the file exists
-if [ -e "$sshd_config" ]; then
-    # Use sed to replace the old string with the new string
-    sudo sed -i "s/$old_string/$new_string/" "$sshd_config"
-
-    # Check if the sed command was successful
-    if [ $? -eq 0 ]; then
-        echo "String replaced successfully."
-        # Restart the SSH service to apply the changes
-        sudo service ssh restart
-    else
-        echo "Error replacing string in $sshd_config."
-    fi
-else
-    echo "File $sshd_config not found."
-fi
-
-echo "123" | passwd --stdin ec2-user
-systemctl restart sshd
-
 #Install ssm agent
 if [[ $(uname -i) == "aarch64" ]]; then
   echo "arm"
