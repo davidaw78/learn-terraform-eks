@@ -125,9 +125,11 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
 }
 
 resource "aws_subnet" "terraform-eks-public-subnet" {
+  count                   = length(var.public-subnet-cidr-blocks)
   vpc_id                  = aws_vpc.terraform-eks-vpc.id
-  cidr_block              = element(var.public_subnet_cidr_blocks, length(var.public_subnet_cidr_blocks))
-  availability_zone       = var.availability_zones[count.index]
+  # two ways to include count in list
+  cidr_block              = element(var.public-subnet-cidr_blocks, length(var.public-subnet-cidr-blocks))
+  availability_zone       = var.availability-zones[count.index]
   map_public_ip_on_launch = true
 
   tags = {
@@ -138,9 +140,10 @@ resource "aws_subnet" "terraform-eks-public-subnet" {
 }
 
 resource "aws_subnet" "terraform-eks-private-subnet" {
+  count                   = length(var.private-subnet-cidr-blocks)
   vpc_id            = aws_vpc.terraform-eks-vpc.id
-  cidr_block        = element(var.private_subnet_cidr_blocks, count.index)
-  availability_zone = element(var.availability_zones, count.index)
+  cidr_block        = var.private-subnet-cidr-blocks[count.index]
+  availability_zone = element(var.availability-zones[count.index]
 
   tags = {
     Name = "${var.cluster-name}-private-subnet"
