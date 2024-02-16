@@ -324,7 +324,7 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     Name = "${var.cluster-name}-private-facing-sg"
   }
 }
-
+/*
 # KIV first, use aws eks cli to update konfig
 # Create kubeconfig. This might help me run kubectl within tf
 locals {
@@ -369,6 +369,7 @@ KUBECONFIG
 output "kubeconfig" {
   value = "${local.kubeconfig}"
 }
+*/
 
 # Setup Nodes
 resource "aws_iam_role" "terraform-eks-nodes-role" {
