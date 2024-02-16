@@ -249,6 +249,7 @@ resource "aws_iam_role_policy_attachment" "terraform-eks-cluster-AmazonEKSServic
 
 # Setup cluster
 resource "aws_eks_cluster" "terraform-eks-cluster" {
+  count           = length(var.availability-zones)
   name            = var.cluster-name
   role_arn        = aws_iam_role.terraform-eks-role-cluster.arn
 
@@ -257,8 +258,8 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
     subnet_ids         = [
-      aws_subnet.terraform-eks-public-subnet.id,
-      aws_subnet.terraform-eks-private-subnet.id
+      aws_subnet.terraform-eks-public-subnet[count.index].id,
+      aws_subnet.terraform-eks-private-subnet[count.index].id
     ]
   }
   
