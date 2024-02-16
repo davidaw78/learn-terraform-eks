@@ -16,25 +16,25 @@ terraform {
 }
 
 # Added variable cider block
-variable "vpc_cidr_block" {
+variable "vpc-cidr-block" {
   type        = string
   default     = "10.0.0.0/16"
   description = "CIDR block range for vpc"
 }
 
-variable "public_subnet_cidr_blocks" {
+variable "public-subnet-cidr-blocks" {
   type = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
   description = "CIDR block range for the public subnet"
 }
 
-variable "private_subnet_cidr_blocks" {
+variable "private-subnet-cidr-blocks" {
   type        = list(string)
   default     = ["10.0.3.0/24", "10.0.4.0/24"]
   description = "CIDR block range for the private subnet"
 }
 
-variable "availability_zones" {
+variable "availability-zones" {
   type  = list(string)
   default = ["us-east-1a", "us-east-1b"]
   description = "List of availability zones for the selected region"
@@ -88,7 +88,7 @@ variable "region" {
 resource "aws_vpc" "terraform-eks-vpc" {
   enable_dns_support = true
   enable_dns_hostnames = true
-  cidr_block = var.vpc_cidr_block
+  cidr_block = var.vpc-cidr-block
 
   tags = {
     Name = "${var.cluster-name}-vpc"
@@ -143,7 +143,7 @@ resource "aws_subnet" "terraform-eks-private-subnet" {
   count                   = length(var.private-subnet-cidr-blocks)
   vpc_id            = aws_vpc.terraform-eks-vpc.id
   cidr_block        = var.private-subnet-cidr-blocks[count.index]
-  availability_zone = element(var.availability-zones[count.index]
+  availability_zone = var.availability-zones[count.index]
 
   tags = {
     Name = "${var.cluster-name}-private-subnet"
