@@ -300,13 +300,12 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "${var.cluster-name}-private-facing-sg"
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol  = "-1"
-    cidr_blocks = var.private-subnet-cidr-blocks[count.index]
-#    cidr_blocks = ["0.0.0.0/0"]
-    # Allow traffic from private subnets
+  dynamic "ingress" {
+    for_each    = var.private-subnet-cidr-blocks
+    protocol    = ingress.value.protocol
+    from_port   = ingress.value.from_port
+    to_port     = ingress.value.to_port
+    cidr_blocks = ingress.value.cidr_blocks
   }
 
   egress {
