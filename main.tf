@@ -40,6 +40,11 @@ variable "availability-zones" {
   description = "List of availability zones for the selected region"
 }
 
+variable "eks-cluster-subnet-ids" {
+  type = list(string)
+  description = "List of subnet IDs. Must be in at least two different availability zones. Amazon EKS creates cross-account elastic network interfaces in these subnets to allow communication between your worker nodes and the Kubernetes control plane."
+}
+
 resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
@@ -249,6 +254,7 @@ resource "aws_iam_role_policy_attachment" "terraform-eks-cluster-AmazonEKSServic
 
 # Setup cluster
 resource "aws_eks_cluster" "terraform-eks-cluster" {
+
   name            = var.cluster-name
   role_arn        = aws_iam_role.terraform-eks-role-cluster.arn
 
@@ -256,10 +262,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
     security_group_ids = [
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
-    subnet_ids         = [
-      aws_subnet.terraform-eks-public-subnet.id,
-      aws_subnet.terraform-eks-private-subnet.id
-    ]
+    subnet_ids = var.eks-cluster-subnet-ids
   }
   
   tags = {
