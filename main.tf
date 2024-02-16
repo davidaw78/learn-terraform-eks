@@ -15,6 +15,31 @@ terraform {
   }
 }
 
+# Added variable cider block
+variable "vpc_cidr_block" {
+  type        = string
+  default     = "10.0.0.0/16"
+  description = "CIDR block range for vpc"
+}
+
+variable "public_subnet_cidr_blocks" {
+  type = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
+  description = "CIDR block range for the public subnet"
+}
+
+variable "private_subnet_cidr_blocks" {
+  type        = list(string)
+  default     = ["10.0.3.0/24", "10.0.4.0/24"]
+  description = "CIDR block range for the private subnet"
+}
+
+variable "availability_zones" {
+  type  = list(string)
+  default = ["us-east-1a", "us-east-1b"]
+  description = "List of availability zones for the selected region"
+}
+
 resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
@@ -63,7 +88,7 @@ variable "region" {
 resource "aws_vpc" "terraform-eks-vpc" {
   enable_dns_support = true
   enable_dns_hostnames = true
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr_block
 
   tags = {
     Name = "${var.cluster-name}-vpc"
@@ -90,7 +115,7 @@ resource "aws_eip" "terraform-eks-eip" {
 
 resource "aws_nat_gateway" "terraform-eks-nat" {
   allocation_id = aws_eip.terraform-eks-eip.id
-  subnet_id     = aws_subnet.terraform-eks-public-us-east-1a.id
+  subnet_id     = aws_subnet.public_subnet[0].id
 
   tags = {
     Name = "${var.cluster-name}-nat"
@@ -99,64 +124,26 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
   depends_on = [aws_internet_gateway.terraform-eks-igw]
 }
 
-
-resource "aws_subnet" "terraform-eks-public-us-east-1a" {
+resource "aws_subnet" "terraform-eks-public-subnet" {
   vpc_id                  = aws_vpc.terraform-eks-vpc.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-east-1a"
+  cidr_block              = element(var.public_subnet_cidr_blocks, count.index)
+  availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                       = "${var.cluster-name}public-us-east-1a"
+    "Name" = "${var.cluster-name}public-subnet"
     "kubernetes.io/role/elb"     = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
 }
 
-resource "aws_subnet" "terraform-eks-public-us-east-2a" {
-  vpc_id                  = aws_vpc.terraform-eks-vpc.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-east-1b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    "Name"                       = "${var.cluster-name}-public-us-east-2a"
-    "kubernetes.io/role/elb"     = "1"
-    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-  }
-}
-
-resource "aws_subnet" "terraform-eks-private-us-east-1b" {
+resource "aws_subnet" "terraform-eks-private-subnet" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
-  cidr_block        = "10.0.3.0/24"
-  availability_zone = "us-east-1a"
+  cidr_block        = element(var.private_subnet_cidr_blocks, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    "Name"                            = "${var.cluster-name}-private-us-east-1b"
-    "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-  }
-}
-
-resource "aws_subnet" "terraform-eks-private-us-east-2b" {
-  vpc_id            = aws_vpc.terraform-eks-vpc.id
-  cidr_block        = "10.0.4.0/24"
-  availability_zone = "us-east-1b"
-
-  tags = {
-    "Name"                            = "${var.cluster-name}-private-us-east-2b"
-    "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-  }
-}
-
-resource "aws_subnet" "terraform-eks-private-us-east-1c" {
-  vpc_id            = aws_vpc.terraform-eks-vpc.id
-  cidr_block        = "10.0.5.0/24"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    "Name"                            = "${var.cluster-name}-private-us-east-1c"
+    Name = "${var.cluster-name}-private-subnet"
     "kubernetes.io/role/internal-elb" = "1"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
   }
@@ -215,28 +202,13 @@ resource "aws_route_table" "terraform-eks-public-rt" {
   }
 }
 
-resource "aws_route_table_association" "public-us-east-1a-rta" {
-  subnet_id      = aws_subnet.terraform-eks-public-us-east-1a.id
+resource "aws_route_table_association" "terraform-eks-public-subnet-rta" {
+  subnet_id      = aws_subnet.terraform-eks-public-subnet.id
   route_table_id = aws_route_table.terraform-eks-public-rt.id
 }
 
-resource "aws_route_table_association" "public-us-east-2a-rta" {
-  subnet_id      = aws_subnet.terraform-eks-public-us-east-2a.id
-  route_table_id = aws_route_table.terraform-eks-public-rt.id
-}
-
-resource "aws_route_table_association" "terraform-eks-private-us-east-1b-rta" {
-  subnet_id      = aws_subnet.terraform-eks-private-us-east-1b.id
-  route_table_id = aws_route_table.terraform-eks-private-rt.id
-}
-
-resource "aws_route_table_association" "terraform-eks-private-us-east-2b-rta" {
-  subnet_id      = aws_subnet.terraform-eks-private-us-east-2b.id
-  route_table_id = aws_route_table.terraform-eks-private-rt.id
-}
-
-resource "aws_route_table_association" "terraform-eks-private-us-east-1c-rta" {
-  subnet_id      = aws_subnet.terraform-eks-private-us-east-1c.id
+resource "aws_route_table_association" "terraform-eks-private-subnet-rta" {
+  subnet_id      = aws_subnet.terraform-eks-private-subnet.id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
 
@@ -280,11 +252,8 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
     subnet_ids         = [
-      aws_subnet.terraform-eks-public-us-east-1a.id,
-      aws_subnet.terraform-eks-public-us-east-2a.id,
-      aws_subnet.terraform-eks-private-us-east-2b.id,
-      aws_subnet.terraform-eks-private-us-east-1b.id,
-      aws_subnet.terraform-eks-private-us-east-1c.id
+      aws_subnet.terraform-eks-public-subnet.id,
+      aws_subnet.terraform-eks-private-subnet.id
     ]
   }
   
@@ -437,8 +406,7 @@ resource "aws_eks_node_group" "private-nodes" {
   node_role_arn   = aws_iam_role.terraform-eks-nodes-role.arn
 
   subnet_ids = [
-    aws_subnet.terraform-eks-private-us-east-1b.id,
-    aws_subnet.terraform-eks-private-us-east-1c.id
+    aws_subnet.terraform-eks-private-subnet.id,
   ]
 
   capacity_type  = "ON_DEMAND"
