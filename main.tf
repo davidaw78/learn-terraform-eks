@@ -206,12 +206,14 @@ resource "aws_route_table" "terraform-eks-public-rt" {
 }
 
 resource "aws_route_table_association" "terraform-eks-public-subnet-rta" {
+  count = length(var.availability-zones)
   subnet_id      = aws_subnet.terraform-eks-public-subnet[count.index].id
   route_table_id = aws_route_table.terraform-eks-public-rt.id
 }
 
 resource "aws_route_table_association" "terraform-eks-private-subnet-rta" {
-  subnet_id      = aws_subnet.terraform-eks-private-subnet.id
+  count = length(var.availability-zones)
+  subnet_id      = aws_subnet.terraform-eks-private-subnet[count.index].id
   route_table_id = aws_route_table.terraform-eks-private-rt.id
 }
 
