@@ -286,7 +286,6 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
   tags = {
     "Name" = "${var.cluster-name}-eks-cluster"
     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-    Who = "Me"
   }
 
   depends_on = [
