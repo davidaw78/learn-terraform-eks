@@ -126,7 +126,7 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
 
 resource "aws_subnet" "terraform-eks-public-subnet" {
   vpc_id                  = aws_vpc.terraform-eks-vpc.id
-  cidr_block              = element(var.public_subnet_cidr_blocks, count.index)
+  cidr_block              = element(var.public_subnet_cidr_blocks[count.index])
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
 
