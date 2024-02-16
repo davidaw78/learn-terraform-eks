@@ -139,7 +139,7 @@ resource "aws_subnet" "terraform-eks-public-subnet" {
 }
 
 resource "aws_subnet" "terraform-eks-private-subnet" {
-  count                   = length(var.private-subnet-cidr-blocks)
+  count             = length(var.private-subnet-cidr-blocks)
   vpc_id            = aws_vpc.terraform-eks-vpc.id
   cidr_block        = var.private-subnet-cidr-blocks[count.index]
   availability_zone = var.availability-zones[count.index]
@@ -296,6 +296,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
 
 # Create private facing security group
 resource "aws_security_group" "terraform-eks-private-facing-sg" {
+  count             = length(var.private-subnet-cidr-blocks)
   vpc_id = aws_vpc.terraform-eks-vpc.id
   name   = "${var.cluster-name}-private-facing-sg"
 
@@ -303,8 +304,8 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     from_port   = 0
     to_port     = 0
     protocol  = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-#    cidr_blocks = ["10.0.3.0/24"]
+    cidr_block = var.private-subnet-cidr-blocks[count.index]
+#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from private subnets
   }
 
