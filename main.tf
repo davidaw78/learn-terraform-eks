@@ -304,7 +304,8 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     from_port   = 0
     to_port     = 0
     protocol  = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_block = var.private-subnet-cidr-blocks[count.index]
+#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from private subnets
   }
 
