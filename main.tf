@@ -115,7 +115,7 @@ resource "aws_eip" "terraform-eks-eip" {
 
 resource "aws_nat_gateway" "terraform-eks-nat" {
   allocation_id = aws_eip.terraform-eks-eip.id
-  subnet_id     = aws_subnet.terraform-eks-public-subnet[0].id
+  subnet_id     = aws_subnet.terraform-eks-public_subnet[0].id
 
   tags = {
     Name = "${var.cluster-name}-nat"
@@ -126,8 +126,8 @@ resource "aws_nat_gateway" "terraform-eks-nat" {
 
 resource "aws_subnet" "terraform-eks-public-subnet" {
   vpc_id                  = aws_vpc.terraform-eks-vpc.id
-  cidr_block              = var.public_subnet_cidr_blocks
-  availability_zone       = var.availability_zones
+  cidr_block              = element(var.public_subnet_cidr_blocks, count.index)
+  availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
 
   tags = {
@@ -139,8 +139,8 @@ resource "aws_subnet" "terraform-eks-public-subnet" {
 
 resource "aws_subnet" "terraform-eks-private-subnet" {
   vpc_id            = aws_vpc.terraform-eks-vpc.id
-  cidr_block        = var.private_subnet_cidr_blocks
-  availability_zone = var.availability_zones
+  cidr_block        = element(var.private_subnet_cidr_blocks, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
     Name = "${var.cluster-name}-private-subnet"
