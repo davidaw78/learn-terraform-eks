@@ -45,6 +45,11 @@ variable "eks-cluster-subnet-ids" {
   description = "List of subnet IDs. Must be in at least two different availability zones. Amazon EKS creates cross-account elastic network interfaces in these subnets to allow communication between your worker nodes and the Kubernetes control plane."
 }
 
+variable "private-subnet-ids" {
+  type = list(string)
+  description = "List of private subnet IDs."
+}
+
 resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
