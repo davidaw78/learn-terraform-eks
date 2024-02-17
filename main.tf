@@ -278,7 +278,8 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = flatten([var.private-subnet-cidr-blocks, var.public-subnet-cidr-blocks])
+#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from public subnet
   }
 
