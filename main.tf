@@ -159,7 +159,7 @@ resource "aws_route_table" "terraform-eks-private-rt" {
     {
       cidr_block                 = "0.0.0.0/0"
       nat_gateway_id             = aws_nat_gateway.terraform-eks-nat.id
-    },
+    }
   ]
 
   tags = {
@@ -174,7 +174,7 @@ resource "aws_route_table" "terraform-eks-public-rt" {
     {
       cidr_block                 = "0.0.0.0/0"
       gateway_id                 = aws_internet_gateway.terraform-eks-igw.id
-    },
+    }
   ]
 
   tags = {
