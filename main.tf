@@ -228,7 +228,7 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
   vpc_config {
     security_group_ids = [
       aws_security_group.terraform-eks-private-facing-sg.id
-    ]   
+    ]
     subnet_ids         = [for subnet in aws_subnet.terraform-eks-public-subnet : subnet.id]
   }
   
