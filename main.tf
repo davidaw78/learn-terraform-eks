@@ -155,12 +155,10 @@ resource "aws_subnet" "terraform-eks-private-subnet" {
 resource "aws_route_table" "terraform-eks-private-rt" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
 
-  route = [
-    {
+  route = {
       cidr_block                 = "0.0.0.0/0"
       nat_gateway_id             = aws_nat_gateway.terraform-eks-nat.id
-    }
-  ]
+  }
 
   tags = {
     Name = "${var.cluster-name}-private-rt"
@@ -170,12 +168,10 @@ resource "aws_route_table" "terraform-eks-private-rt" {
 resource "aws_route_table" "terraform-eks-public-rt" {
   vpc_id = aws_vpc.terraform-eks-vpc.id
 
-  route = [
-    {
+  route = {
       cidr_block                 = "0.0.0.0/0"
       gateway_id                 = aws_internet_gateway.terraform-eks-igw.id
-    }
-  ]
+  }
 
   tags = {
     Name = "${var.cluster-name}-public-rt"
