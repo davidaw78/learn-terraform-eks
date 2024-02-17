@@ -229,7 +229,9 @@ resource "aws_eks_cluster" "terraform-eks-cluster" {
     security_group_ids = [
       aws_security_group.terraform-eks-private-facing-sg.id
     ]
-    subnet_ids         = [for subnet in aws_subnet.terraform-eks-public-subnet : subnet.id]
+    subnet_ids = flatten(aws_subnet.terraform-eks-public-subnet)
+
+#    subnet_ids         = [for subnet in aws_subnet.terraform-eks-public-subnet : subnet.id]
   }
   
   tags = {
@@ -279,7 +281,8 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     from_port   = 0
     to_port     = 0
     protocol  = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = flatten(var.private-subnet-cidr-blocks)
+#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from private subnets
   }
 
