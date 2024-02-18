@@ -50,30 +50,14 @@ resource "null_resource" "run-kubectl" {
 resource "null_resource" "run-kubectl1" {
   provisioner "local-exec" {
         command = <<EOT
-#        kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml    
         sleep 60
         kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.27"
-#        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
-#        kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
         sleep 60
         EOT
   }
   depends_on = [resource.null_resource.run-kubectl]
 }
-
-
-#change address
-#resource "null_resource" "run-kubectl2" {
-#  provisioner "local-exec" {
-#        command = <<EOT
-#        address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
-#        sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
-#        kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
-#        EOT
-#  }
-#  depends_on = [resource.null_resource.run-kubectl1]
-#}
 
 variable "cluster-name" {
   description = "This will ask you to name the cluster"
@@ -254,9 +238,7 @@ resource "aws_security_group" "terraform-eks-public-facing-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "tcp"
-#    protocol    = "-1"
     cidr_blocks = flatten([var.private-subnet-cidr-blocks, var.public-subnet-cidr-blocks])
-#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from public subnet
   }
 
@@ -282,7 +264,6 @@ resource "aws_security_group" "terraform-eks-private-facing-sg" {
     to_port     = 0
     protocol  = "-1"
     cidr_blocks = flatten(var.private-subnet-cidr-blocks)
-#    cidr_blocks = ["0.0.0.0/0"]
     # Allow traffic from private subnets
   }
 
