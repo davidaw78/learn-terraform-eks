@@ -371,10 +371,7 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
           "ec2:AttachVolume"
          ],
         Effect   = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-        },
+       },
       ]
     })  
  }
