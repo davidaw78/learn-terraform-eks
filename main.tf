@@ -377,6 +377,7 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
         },
       ]
     })  
+ }
 }
 
 
