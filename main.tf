@@ -51,6 +51,7 @@ resource "null_resource" "run-kubectl1" {
   provisioner "local-exec" {
         command = <<EOT
 #        kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
+        kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.27"
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml    
         sleep 60
 #        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
@@ -357,6 +358,22 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
     }]
     Version = "2012-10-17"
   })
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      "Action": [
+        "ec2:CreateVolume",
+        "ec2:CreateTags",
+        "ec2:AttachVolume"
+      ],
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+
 }
 
 resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
