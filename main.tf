@@ -370,31 +370,16 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
           "ec2:CreateTags",
           "ec2:AttachVolume"
          ],
-          Effect   = "Allow"
-          Resource = "*"
+        Effect   = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
         },
       ]
     })  
 }
 
-resource "aws_iam_role" "terraform-eks-nodes-role2" {
-  name = "eks-node-group-nodes"
 
-  assume_role_policy = jsonencode({
-    Statement = [{
-      "Action": [
-        "ec2:CreateVolume",
-        "ec2:CreateTags",
-        "ec2:AttachVolume"
-      ],
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-    }]
-    Version = "2012-10-17"
-  })
-}
 
 resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
