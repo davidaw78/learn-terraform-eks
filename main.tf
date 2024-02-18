@@ -46,6 +46,36 @@ variable "instance_types" {
   description = "Set of instance types associated with the EKS Node Group."
 }
 
+variable "ami_type" {
+  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to AL2_x86_64. Valid values: AL2_x86_64, AL2_x86_64_GPU."
+  type = string 
+  default = "AL2_x86_64"
+}
+
+variable "disk_size" {
+  description = "Disk size in GiB for worker nodes. Defaults to 20."
+  type = number
+  default = 20
+}
+
+variable "pvt_desired_size" {
+  description = "Desired number of worker nodes in private subnet"
+  default = 1
+  type = number
+}
+
+variable "pvt_max_size" {
+  description = "Maximum number of worker nodes in private subnet."
+  default = 2
+  type = number
+}
+
+variable "pvt_min_size" {
+  description = "Minimum number of worker nodes in private subnet."
+  default = 1
+  type = number
+}
+
 resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
@@ -396,13 +426,15 @@ resource "aws_eks_node_group" "private-nodes" {
 
   subnet_ids = [for subnet in aws_subnet.terraform-eks-private-subnet : subnet.id]
 
+  ami_type       = var.ami_type
+  disk_size      = var.disk_size
   capacity_type  = "ON_DEMAND"
   instance_types = var.instance_types
 
   scaling_config {
-    desired_size = 1
-    max_size     = 2
-    min_size     = 1
+    desired_size = var.pvt_desired_size
+    max_size     = var.pvt_max_size
+    min_size     = var.pvt_min_size
   }
 
   update_config {
