@@ -346,6 +346,7 @@ output "kubeconfig" {
 # Setup Nodes
 resource "aws_iam_role" "terraform-eks-nodes-role" {
   name = "eks-node-group-nodes"
+  managed_policy_arns = [aws_iam_policy.policy-ec2.arn]
 
   assume_role_policy = jsonencode({
     Statement = [{
