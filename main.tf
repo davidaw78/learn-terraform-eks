@@ -40,6 +40,12 @@ variable "availability-zones" {
   description = "List of availability zones for the selected region"
 }
 
+variable "instance_types" {
+  type = list(string)
+  default = ["t3.small"]
+  description = "Set of instance types associated with the EKS Node Group."
+}
+
 resource "null_resource" "run-kubectl" {
   provisioner "local-exec" {
         command = "aws eks update-kubeconfig --region ${var.region}  --name ${var.cluster-name}"
@@ -391,7 +397,7 @@ resource "aws_eks_node_group" "private-nodes" {
   subnet_ids = [for subnet in aws_subnet.terraform-eks-private-subnet : subnet.id]
 
   capacity_type  = "ON_DEMAND"
-  instance_types = ["t3.small"]
+  instance_types = var.instance_types
 
   scaling_config {
     desired_size = 1
