@@ -349,7 +349,12 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
 
   assume_role_policy = jsonencode({
     Statement = [{
-      Action = "sts:AssumeRole"
+      Action: [
+        "sts:AssumeRole",
+        "ec2:CreateVolume",
+        "ec2:CreateTags",
+        "ec2:AttachVolume"
+      ]
       Effect = "Allow"
       Principal = {
         Service = "ec2.amazonaws.com"
@@ -357,24 +362,6 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
     }]
     Version = "2012-10-17"
   })
-
-  inline_policy {
-    name = "my_inline_policy"
-
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-        "Action": [
-          "ec2:CreateVolume",
-          "ec2:CreateTags",
-          "ec2:AttachVolume"
-         ],
-        Effect   = "Allow"
-       },
-      ]
-    })  
- }
 }
 
 
