@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
 terraform {
@@ -86,9 +86,12 @@ resource "null_resource" "run-kubectl" {
 resource "null_resource" "run-kubectl1" {
   provisioner "local-exec" {
         command = <<EOT
+        kubectl apply -f ~/learn-terraform-eks/a2024-namespace.yaml
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml    
         sleep 60
         kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.27"
+        kubectl apply -f ~/learn-terraform-eks/mongo-deployment.yaml
+        kubectl apply -f ~/learn-terraform-eks/a2024-ingress.yaml
         sleep 60
         EOT
   }
