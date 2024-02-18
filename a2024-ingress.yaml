@@ -15,6 +15,6 @@ spec:
         pathType: Prefix  
         backend:
           service:
-            name: a2024-service
+            name: wordpress
             port: 
-              number: 1741
+              number: 80
