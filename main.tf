@@ -63,18 +63,16 @@ resource "null_resource" "run-kubectl1" {
 
 
 #change address
-/*
-resource "null_resource" "run-kubectl2" {
-  provisioner "local-exec" {
-        command = <<EOT
-        address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
-        sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
-        kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
-        EOT
-  }
-  depends_on = [resource.null_resource.run-kubectl1]
-}
-*/
+#resource "null_resource" "run-kubectl2" {
+#  provisioner "local-exec" {
+#        command = <<EOT
+#        address=$(echo "$(kubectl get ingress -n a2024 | awk 'NR==2 {print $4}')")
+#        sed -i.bak '/^ *- name: externalhost$/,/^ *value:/ s/value:.*/value: "'"$address"'"/' ~/learn-terraform-eks/a2024-deployment.yaml
+#        kubectl apply -f ~/learn-terraform-eks/a2024-deployment.yaml
+#        EOT
+#  }
+#  depends_on = [resource.null_resource.run-kubectl1]
+#}
 
 variable "cluster-name" {
   description = "This will ask you to name the cluster"
