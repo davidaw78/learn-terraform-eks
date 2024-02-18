@@ -351,9 +351,6 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
     Statement = [{
       Action: [
         "sts:AssumeRole",
-        "ec2:CreateVolume",
-        "ec2:CreateTags",
-        "ec2:AttachVolume"
       ]
       Effect = "Allow"
       Principal = {
@@ -364,7 +361,24 @@ resource "aws_iam_role" "terraform-eks-nodes-role" {
   })
 }
 
+resource "aws_iam_policy" "policy-ec2" {
+  name = "policy-381966"
 
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = [
+        "ec2:CreateVolume",
+        "ec2:CreateTags",
+        "ec2:AttachVolume"
+       ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
 
 resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
