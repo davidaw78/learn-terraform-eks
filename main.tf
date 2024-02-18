@@ -55,7 +55,7 @@ variable "ami_type" {
 variable "disk_size" {
   description = "Disk size in GiB for worker nodes. Defaults to 20."
   type = number
-  default = 20
+  default = 8
 }
 
 variable "pvt_desired_size" {
