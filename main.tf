@@ -390,6 +390,7 @@ resource "aws_iam_policy" "policy-ec2" {
         Action   = [
         "ec2:CreateVolume",
         "ec2:CreateTags",
+        "ec2:DescribeVolume",
         "ec2:AttachVolume"
        ]
         Effect   = "Allow"
