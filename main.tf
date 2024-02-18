@@ -25,19 +25,19 @@ variable "vpc-cidr-block" {
 variable "public-subnet-cidr-blocks" {
   type = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "CIDR block range for the public subnet"
+  description = "CIDR block range for public subnet"
 }
 
 variable "private-subnet-cidr-blocks" {
   type        = list(string)
   default     = ["10.0.3.0/24", "10.0.4.0/24"]
-  description = "CIDR block range for the private subnet"
+  description = "CIDR block range for private subnet"
 }
 
 variable "availability-zones" {
   type  = list(string)
   default = ["us-east-1a", "us-east-1b"]
-  description = "List of availability zones for the selected region"
+  description = "List of availability zones for selected region"
 }
 
 variable "instance_types" {
@@ -47,31 +47,31 @@ variable "instance_types" {
 }
 
 variable "ami_type" {
-  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. Defaults to AL2_x86_64. Valid values: AL2_x86_64, AL2_x86_64_GPU."
+  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html"
   type = string 
   default = "AL2_x86_64"
 }
 
 variable "disk_size" {
-  description = "Disk size in GiB for worker nodes. Defaults to 20."
+  description = "Disk size in GiB for nodes."
   type = number
   default = 8
 }
 
 variable "pvt_desired_size" {
-  description = "Desired number of worker nodes in private subnet"
+  description = "Desired # of nodes in private subnet"
   default = 1
   type = number
 }
 
 variable "pvt_max_size" {
-  description = "Maximum number of worker nodes in private subnet."
+  description = "Maximum # of nodes in private subnet."
   default = 2
   type = number
 }
 
 variable "pvt_min_size" {
-  description = "Minimum number of worker nodes in private subnet."
+  description = "Minimum # of nodes in private subnet."
   default = 1
   type = number
 }
