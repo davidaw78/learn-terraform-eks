@@ -427,7 +427,6 @@ resource "aws_eks_node_group" "private-nodes" {
   subnet_ids = [for subnet in aws_subnet.terraform-eks-private-subnet : subnet.id]
 
   ami_type       = var.ami_type
-  disk_size      = var.disk_size
   capacity_type  = "ON_DEMAND"
   instance_types = var.instance_types
 
@@ -493,7 +492,7 @@ resource "aws_launch_template" "terraform-eks-demo" {
     device_name = "/dev/xvdb"
 
     ebs {
-      volume_size = 8
+      volume_size = var.disk_size
       volume_type = "gp2"
     }
   }
