@@ -61,8 +61,9 @@ resource "null_resource" "run-kubectl1" {
   depends_on = [resource.null_resource.run-kubectl]
 }
 
-/*
+
 #change address
+/*
 resource "null_resource" "run-kubectl2" {
   provisioner "local-exec" {
         command = <<EOT
